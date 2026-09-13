@@ -27,7 +27,7 @@ import { PublicAdvisoryBanner } from "@/components/layout/PublicAdvisoryBanner";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
 
 const NAV_LINKS = [
-  { href: ROUTES.EVENTS, label: "Live Events & Passes", icon: Ticket },
+  { href: ROUTES.EVENTS, label: "Live Events", icon: Ticket },
   { href: ROUTES.NAVIGATION, label: "Map", icon: MapPin },
   { href: ROUTES.SESSIONS, label: "Sessions", icon: Calendar },
   { href: ROUTES.CROWD, label: "Crowd", icon: Users },

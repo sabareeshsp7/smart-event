@@ -8,7 +8,7 @@ import {
   ShieldAlert,
   Accessibility,
   Bell,
-  UserCheck,
+  Clock,
   HeartPulse,
   Shield,
   Flame,
@@ -55,10 +55,10 @@ const FEATURES = [
     color: "#059669",
   },
   {
-    icon: UserCheck,
-    title: "Digital Accreditation",
-    desc: "Register credentials, save profile details to the database, and generate instant printable passes.",
-    href: ROUTES.REGISTER,
+    icon: Clock,
+    title: "Live Schedules & Timings",
+    desc: "Real-time clock times, venue coordinates, and zone logistics synced directly with event dispatch.",
+    href: ROUTES.SESSIONS,
     color: "#2563eb",
   },
   {

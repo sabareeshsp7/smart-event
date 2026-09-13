@@ -97,9 +97,9 @@ export function AppFooter() {
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {[
                 { href: ROUTES.SESSIONS, label: "Session Schedule" },
+                { href: ROUTES.EVENTS, label: "Live Events Directory" },
                 { href: ROUTES.NAVIGATION, label: "Interactive Venue Map" },
                 { href: ROUTES.CROWD, label: "Zone Crowd Levels" },
-                { href: ROUTES.REGISTER, label: "Attendee Registration" },
                 { href: ROUTES.ACCESSIBILITY, label: "Accessibility Services" },
               ].map(({ href, label }) => (
                 <li key={href}>
