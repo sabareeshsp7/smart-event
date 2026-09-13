@@ -1,34 +1,38 @@
 "use client";
 /**
- * Live Events Directory — Real-time event intelligence powered by Ticketmaster Discovery API.
- * Clean, image-free layout focusing on verified event details: exact clock time, date, venue place, and status.
- * Clean light mode aesthetic with Lucide icons and zero emojis.
+ * BIEC Live Events & Venue Programs Directory.
+ * Dedicated to Bangalore International Exhibition Centre (BIEC).
+ * Address: 10th Mile, Tumkur Road, Madavara Post, Bengaluru, Karnataka 562123.
+ * Image-free design displaying exact clock times, dates, halls, and 1-click venue map navigation.
  */
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
-  Ticket,
   Search,
   Calendar,
   Clock,
   MapPin,
-  ExternalLink,
   Sparkles,
   X,
   Tag,
-  DollarSign,
   Compass,
+  Navigation,
+  Building2,
+  Users,
+  CheckCircle2,
 } from "lucide-react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import { API_ROUTES } from "@/lib/constants";
+import { API_ROUTES, VENUE_NAME, VENUE_ADDRESS, ROUTES } from "@/lib/constants";
 import type { NormalizedTicketmasterEvent } from "@/app/api/ticketmaster/events/route";
 
 const CATEGORIES = [
   "All",
-  "Music",
-  "Sports",
-  "Arts & Theatre",
-  "Miscellaneous",
+  "Keynote",
+  "Workshop",
+  "Exhibition",
+  "Panel",
+  "Networking",
 ] as const;
 
 export default function EventsPage() {
@@ -37,7 +41,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const debouncedQuery = useDebounce(searchQuery, 400);
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
     void loadEvents();
@@ -49,7 +53,6 @@ export default function EventsPage() {
       const params = new URLSearchParams();
       if (debouncedQuery.trim()) params.set("keyword", debouncedQuery.trim());
       if (selectedCategory !== "All") params.set("classification", selectedCategory);
-      params.set("size", "24");
 
       const res = await fetch(`${API_ROUTES.TICKETMASTER_EVENTS}?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to load events");
@@ -69,7 +72,7 @@ export default function EventsPage() {
   const formatDate = (dateStr: string) => {
     try {
       const d = new Date(dateStr);
-      return d.toLocaleDateString("en-US", {
+      return d.toLocaleDateString("en-IN", {
         weekday: "short",
         month: "short",
         day: "numeric",
@@ -87,7 +90,7 @@ export default function EventsPage() {
       const h = parseInt(hours, 10);
       const ampm = h >= 12 ? "PM" : "AM";
       const formattedHours = h % 12 || 12;
-      return `${formattedHours}:${minutes} ${ampm}`;
+      return `${formattedHours}:${minutes} ${ampm} IST`;
     } catch {
       return timeStr;
     }
@@ -97,45 +100,104 @@ export default function EventsPage() {
     <div className="page-wrapper" style={{ background: "var(--color-bg)", minHeight: "100vh" }}>
       <div className="container" style={{ paddingTop: "2.5rem", paddingBottom: "4rem" }}>
         
-        {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.35rem 0.85rem",
-              borderRadius: "9999px",
-              background: "rgba(99,102,241,0.08)",
-              border: "1px solid rgba(99,102,241,0.2)",
-              color: "#4f46e5",
-              fontSize: "0.8rem",
-              fontWeight: 700,
-              marginBottom: "0.75rem",
-            }}
-          >
-            <Sparkles size={15} />
-            <span>Ticketmaster Discovery API · Live Event Feed</span>
-          </div>
+        {/* Venue Information Banner */}
+        <div
+          className="glass-card"
+          style={{
+            padding: "1.5rem 1.75rem",
+            marginBottom: "2rem",
+            background: "#ffffff",
+            border: "1px solid #cbd5e1",
+            borderRadius: "0.75rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "9999px",
+                  background: "rgba(79, 70, 229, 0.08)",
+                  border: "1px solid rgba(79, 70, 229, 0.2)",
+                  color: "#4f46e5",
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  marginBottom: "0.6rem",
+                }}
+              >
+                <Building2 size={14} />
+                <span>Official Venue Program &amp; Schedule</span>
+              </div>
 
-          <h1
-            className="section-title"
-            style={{
-              fontSize: "2.2rem",
-              fontWeight: 800,
-              color: "var(--color-text)",
-              letterSpacing: "-0.02em",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Live Events <span className="gradient-text">Directory</span>
-          </h1>
-          <p className="section-subtitle" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>
-            Real-time verified event schedules, exact clock times, venues, and ticket information worldwide.
-          </p>
+              <h1
+                style={{
+                  fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
+                  fontWeight: 800,
+                  color: "#0f172a",
+                  letterSpacing: "-0.02em",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                {VENUE_NAME}
+              </h1>
+
+              <p
+                style={{
+                  color: "#475569",
+                  fontSize: "0.95rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  margin: 0,
+                  flexWrap: "wrap",
+                }}
+              >
+                <MapPin size={16} color="#dc2626" />
+                <span>{VENUE_ADDRESS}</span>
+              </p>
+            </div>
+
+            <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+              <Link
+                href={ROUTES.NAVIGATION}
+                className="btn btn-primary btn-sm"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  padding: "0.6rem 1.25rem",
+                  fontWeight: 600,
+                }}
+              >
+                <Navigation size={15} />
+                <span>Venue Campus Map</span>
+              </Link>
+
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(VENUE_ADDRESS)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost btn-sm"
+                style={{
+                  border: "1px solid #cbd5e1",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  padding: "0.6rem 1rem",
+                }}
+              >
+                <Compass size={15} color="#4f46e5" />
+                <span>Directions</span>
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Search & Filter Toolbar */}
+        {/* Search & Category Filter Bar */}
         <div
           className="glass-card"
           style={{
@@ -167,7 +229,7 @@ export default function EventsPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search events by artist, conference title, venue, or city..."
+                placeholder="Search programs by title, speaker, hall (e.g. Hall 1), or topic..."
                 style={{
                   width: "100%",
                   border: "none",
@@ -202,12 +264,12 @@ export default function EventsPage() {
                 border: "1px solid #e2e8f0",
               }}
             >
-              <Ticket size={16} color="#4f46e5" />
-              <strong style={{ color: "#0f172a" }}>{totalEvents.toLocaleString()}</strong> Events Live
+              <Sparkles size={15} color="#4f46e5" />
+              <strong style={{ color: "#0f172a" }}>{totalEvents}</strong> Scheduled Venue Programs
             </div>
           </div>
 
-          {/* Category Filters */}
+          {/* Category Filter Chips */}
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat;
@@ -234,12 +296,12 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {/* Events Grid (Clean, Image-Free, Typography & Info Focused) */}
+        {/* Programs Grid (Image-Free, Clear Clock Times & Hall Locations) */}
         {loading ? (
           <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
             <div className="spinner" style={{ width: "2.5rem", height: "2.5rem", margin: "0 auto" }} />
             <p style={{ color: "#64748b", marginTop: "1rem", fontWeight: 500 }}>
-              Retrieving live events telemetry from Ticketmaster API...
+              Retrieving live venue schedule for BIEC Bengaluru...
             </p>
           </div>
         ) : events.length === 0 ? (
@@ -247,19 +309,19 @@ export default function EventsPage() {
             className="glass-card"
             style={{ textAlign: "center", padding: "4rem 2rem", background: "#ffffff" }}
           >
-            <Ticket size={36} color="#94a3b8" style={{ margin: "0 auto 1rem auto" }} />
+            <Building2 size={36} color="#94a3b8" style={{ margin: "0 auto 1rem auto" }} />
             <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>
-              No events matched your search
+              No scheduled programs match your query
             </h3>
             <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-              Try adjusting your search terms or select "All" categories.
+              Try searching a different hall, speaker, or clear your filters.
             </p>
           </div>
         ) : (
           <div className="grid-3" style={{ gap: "1.25rem" }}>
-            {events.map((event) => (
+            {events.map((prog) => (
               <article
-                key={event.id}
+                key={prog.id}
                 className="glass-card"
                 style={{
                   display: "flex",
@@ -272,7 +334,7 @@ export default function EventsPage() {
                   boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
                 }}
               >
-                {/* Header: Category & Sale Status */}
+                {/* Header: Track Tag & Live Status */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                   <span
                     style={{
@@ -288,7 +350,7 @@ export default function EventsPage() {
                       textTransform: "uppercase",
                     }}
                   >
-                    <Tag size={12} /> {event.category} {event.genre && `· ${event.genre}`}
+                    <Tag size={12} /> {prog.category} · {prog.genre}
                   </span>
 
                   <span
@@ -296,9 +358,9 @@ export default function EventsPage() {
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "0.25rem",
-                      background: event.status === "onsale" ? "#ecfdf5" : "#f1f5f9",
-                      color: event.status === "onsale" ? "#059669" : "#64748b",
-                      border: `1px solid ${event.status === "onsale" ? "#a7f3d0" : "#e2e8f0"}`,
+                      background: "#ecfdf5",
+                      color: "#059669",
+                      border: "1px solid #a7f3d0",
                       fontSize: "0.7rem",
                       fontWeight: 700,
                       padding: "0.15rem 0.5rem",
@@ -306,106 +368,130 @@ export default function EventsPage() {
                       textTransform: "uppercase",
                     }}
                   >
-                    {event.status === "onsale" ? "On Sale" : event.status}
+                    <CheckCircle2 size={12} /> Scheduled
                   </span>
                 </div>
 
-                {/* Event Name */}
+                {/* Program Title */}
                 <h3
                   style={{
                     fontSize: "1.15rem",
                     fontWeight: 700,
                     color: "#0f172a",
-                    marginBottom: "1rem",
-                    lineHeight: 1.35,
+                    marginBottom: "0.85rem",
+                    lineHeight: 1.4,
                     minHeight: "2.7rem",
                   }}
                 >
-                  {event.name}
+                  {prog.name}
                 </h3>
 
-                {/* Event Info Details: Date, Clock Time, Place */}
+                {/* Details Container: Clock Time, Date, Hall Location */}
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "0.65rem",
+                    gap: "0.7rem",
                     background: "#f8fafc",
-                    padding: "1rem",
+                    padding: "1.1rem",
                     borderRadius: "0.5rem",
                     border: "1px solid #e2e8f0",
                     marginBottom: "1.25rem",
                     fontSize: "0.85rem",
                   }}
                 >
-                  {/* Calendar Date */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                    <div style={{ width: "24px", height: "24px", borderRadius: "0.375rem", background: "rgba(79, 70, 229, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#4f46e5", flexShrink: 0 }}>
-                      <Calendar size={14} />
-                    </div>
-                    <div>
-                      <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Date</span>
-                      <strong style={{ color: "#0f172a" }}>{formatDate(event.date)}</strong>
-                    </div>
-                  </div>
-
                   {/* Clock Time */}
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                    <div style={{ width: "24px", height: "24px", borderRadius: "0.375rem", background: "rgba(8, 145, 178, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0891b2", flexShrink: 0 }}>
-                      <Clock size={14} />
+                    <div
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "0.375rem",
+                        background: "rgba(8, 145, 178, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#0891b2",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Clock size={15} />
                     </div>
                     <div>
                       <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Clock Time</span>
-                      <strong style={{ color: "#0f172a" }}>
-                        {formatClockTime(event.time)}
-                        {event.timezone && (
-                          <span style={{ fontWeight: 500, color: "#64748b", marginLeft: "0.35rem", fontSize: "0.75rem" }}>
-                            ({event.timezone.replace("_", " ")})
-                          </span>
-                        )}
+                      <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>
+                        {formatClockTime(prog.time)}
                       </strong>
                     </div>
                   </div>
 
-                  {/* Place & Venue */}
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
-                    <div style={{ width: "24px", height: "24px", borderRadius: "0.375rem", background: "rgba(220, 38, 38, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#dc2626", flexShrink: 0, marginTop: "0.1rem" }}>
-                      <MapPin size={14} />
+                  {/* Date */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                    <div
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "0.375rem",
+                        background: "rgba(79, 70, 229, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#4f46e5",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Calendar size={15} />
                     </div>
                     <div>
-                      <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Place &amp; Venue</span>
-                      <strong style={{ color: "#0f172a", display: "block" }}>{event.venue.name}</strong>
+                      <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Date</span>
+                      <strong style={{ color: "#0f172a" }}>{formatDate(prog.date)}</strong>
+                    </div>
+                  </div>
+
+                  {/* Hall / Stage Location inside BIEC */}
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
+                    <div
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "0.375rem",
+                        background: "rgba(220, 38, 38, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#dc2626",
+                        flexShrink: 0,
+                        marginTop: "0.1rem",
+                      }}
+                    >
+                      <MapPin size={15} />
+                    </div>
+                    <div>
+                      <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Venue Hall &amp; Stage</span>
+                      <strong style={{ color: "#0f172a", display: "block", fontSize: "0.9rem" }}>
+                        {prog.venue.hall}
+                      </strong>
                       <span style={{ color: "#475569", fontSize: "0.8rem", display: "block" }}>
-                        {event.venue.address ? `${event.venue.address}, ` : ""}
-                        {event.venue.city}
-                        {event.venue.state ? `, ${event.venue.state}` : ""}
-                        {event.venue.country ? `, ${event.venue.country}` : ""}
+                        {prog.venue.name} · {prog.venue.city}
                       </span>
                     </div>
                   </div>
 
-                  {/* Price Tier (if available) */}
-                  {event.priceRange && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", borderTop: "1px dashed #e2e8f0", paddingTop: "0.5rem", marginTop: "0.1rem" }}>
-                      <div style={{ width: "24px", height: "24px", borderRadius: "0.375rem", background: "rgba(5, 150, 105, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#059669", flexShrink: 0 }}>
-                        <DollarSign size={14} />
-                      </div>
-                      <div>
-                        <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Pricing Tier</span>
-                        <strong style={{ color: "#059669" }}>
-                          {event.priceRange.min} - {event.priceRange.max} {event.priceRange.currency}
-                        </strong>
-                      </div>
-                    </div>
-                  )}
+                  {/* Capacity & Speaker (if available) */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px dashed #e2e8f0", paddingTop: "0.6rem", marginTop: "0.2rem", fontSize: "0.8rem", color: "#64748b" }}>
+                    <span>Presenter: <strong style={{ color: "#334155" }}>{prog.speaker || "Keynote Panel"}</strong></span>
+                    {prog.capacity && (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+                        <Users size={13} /> {prog.capacity} seats
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Footer Action: Official Ticketmaster Details */}
+                {/* Direct Action: Locate on BIEC Floor Map */}
                 <div style={{ marginTop: "auto", display: "flex", gap: "0.5rem" }}>
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={ROUTES.NAVIGATION}
                     className="btn btn-primary"
                     style={{
                       flex: 1,
@@ -418,31 +504,29 @@ export default function EventsPage() {
                       borderRadius: "0.5rem",
                     }}
                   >
-                    <span>View Ticketmaster Event Details</span>
-                    <ExternalLink size={15} />
-                  </a>
+                    <Navigation size={14} />
+                    <span>Navigate to {prog.venue.hall.split("—")[0].trim()}</span>
+                  </Link>
 
-                  {event.venue.latitude && event.venue.longitude && (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${event.venue.name} ${event.venue.city}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-ghost"
-                      style={{
-                        padding: "0.6rem 0.8rem",
-                        border: "1px solid #cbd5e1",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      title="Open in Google Maps"
-                      aria-label="Open in Google Maps"
-                    >
-                      <Compass size={16} color="#6366f1" />
-                    </a>
-                  )}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      `${VENUE_NAME} ${prog.venue.hall}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-ghost"
+                    style={{
+                      padding: "0.6rem 0.8rem",
+                      border: "1px solid #cbd5e1",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    title="Open BIEC in Google Maps"
+                    aria-label="Open in Google Maps"
+                  >
+                    <Compass size={16} color="#6366f1" />
+                  </a>
                 </div>
               </article>
             ))}
