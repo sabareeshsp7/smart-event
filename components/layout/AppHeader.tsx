@@ -117,99 +117,101 @@ export function AppHeader() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.4rem",
-                    padding: "0.4rem 0.75rem",
+                    gap: "0.35rem",
+                    padding: "0.35rem 0.65rem",
                     borderRadius: "var(--radius-md)",
                     textDecoration: "none",
-                    fontSize: "0.85rem",
+                    fontSize: "0.82rem",
                     fontWeight: 600,
                     color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
                     background: isActive ? "rgba(79, 70, 229, 0.08)" : "transparent",
                     border: isActive ? "1px solid rgba(79, 70, 229, 0.25)" : "1px solid transparent",
                     transition: "all 0.15s ease",
+                    whiteSpace: "nowrap",
                   }}
                   aria-current={isActive ? "page" : undefined}
                 >
-                  <Icon size={15} color={isActive ? "var(--color-primary)" : "currentColor"} />
+                  <Icon size={14} color={isActive ? "var(--color-primary)" : "currentColor"} />
                   {label}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Real-time Clock & Live Telemetry Sync */}
-          <HeaderLiveClock />
+          {/* Right controls: Clock, Profile, 112, and Mobile Toggle */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexShrink: 0 }}>
+            {/* Real-time Clock */}
+            <HeaderLiveClock />
 
-          {/* Attendee Profile Button */}
-          <button
+            {/* Attendee Profile Button */}
+            <button
+              onClick={() => {
+                setInputName(profile.name);
+                setInputPhone(profile.phone);
+                setProfileModalOpen(true);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                padding: "0.35rem 0.65rem",
+                borderRadius: "9999px",
+                background: "#f1f5f9",
+                border: "1px solid #cbd5e1",
+                color: "#334155",
+                fontSize: "0.78rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+              title="Set your attendee name & phone"
+              aria-label="Attendee profile"
+            >
+              <User size={14} color="#6366f1" />
+              <span style={{ maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {profile.name ? profile.name : "My Profile"}
+              </span>
+            </button>
 
-            onClick={() => {
-              setInputName(profile.name);
-              setInputPhone(profile.phone);
-              setProfileModalOpen(true);
-            }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              padding: "0.35rem 0.75rem",
-              borderRadius: "9999px",
-              background: "#f1f5f9",
-              border: "1px solid #cbd5e1",
-              color: "#334155",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-            title="Set your attendee name & phone"
-            aria-label="Attendee profile"
-          >
-            <User size={14} color="#6366f1" />
-            <span style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {profile.name ? profile.name : "My Profile"}
-            </span>
-          </button>
+            {/* Emergency quick-access */}
+            <a
+              href="tel:112"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                padding: "0.35rem 0.7rem",
+                borderRadius: "var(--radius-full)",
+                background: "rgba(220, 38, 38, 0.08)",
+                border: "1px solid rgba(220, 38, 38, 0.25)",
+                color: "var(--color-danger)",
+                textDecoration: "none",
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
+              aria-label="Call emergency services 112"
+            >
+              <PhoneCall size={13} /> <span>112</span>
+            </a>
 
-          {/* Emergency quick-access */}
-          <a
-            href="tel:112"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              padding: "0.35rem 0.85rem",
-              borderRadius: "var(--radius-full)",
-              background: "rgba(220, 38, 38, 0.08)",
-              border: "1px solid rgba(220, 38, 38, 0.25)",
-              color: "var(--color-danger)",
-              textDecoration: "none",
-              fontSize: "0.8rem",
-              fontWeight: 700,
-              flexShrink: 0,
-            }}
-            aria-label="Call emergency services 112"
-          >
-            <PhoneCall size={14} /> <span>112</span>
-          </a>
-
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            className="mobile-toggle"
-            style={{
-              display: "none",
-              background: "transparent",
-              border: "none",
-              color: "var(--color-text-primary)",
-              cursor: "pointer",
-              padding: "0.5rem",
-            }}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              className="mobile-toggle"
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--color-text-primary)",
+                cursor: "pointer",
+                padding: "0.4rem",
+              }}
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
 
         {/* Global Public Advisory Banner */}
@@ -230,11 +232,34 @@ export function AppHeader() {
             role="dialog"
             aria-label="Mobile navigation"
           >
-            <div style={{ paddingBottom: "0.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "center" }}>
+            <div style={{ paddingBottom: "0.75rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
               <HeaderLiveClock />
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  setInputName(profile.name);
+                  setInputPhone(profile.phone);
+                  setProfileModalOpen(true);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.35rem 0.75rem",
+                  borderRadius: "9999px",
+                  background: "#f1f5f9",
+                  border: "1px solid #cbd5e1",
+                  color: "#334155",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                <User size={14} color="#6366f1" />
+                <span>{profile.name ? profile.name : "My Profile"}</span>
+              </button>
             </div>
             {NAV_LINKS.map(({ href, label, icon: Icon }) => {
-
               const isActive = pathname === href;
               return (
                 <Link
@@ -262,6 +287,7 @@ export function AppHeader() {
           </div>
         )}
       </header>
+
 
       {/* Attendee Profile Modal */}
       {profileModalOpen && (
