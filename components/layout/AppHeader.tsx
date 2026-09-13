@@ -1,25 +1,40 @@
 "use client";
 /**
- * App Header — navigation bar with mobile-responsive menu.
- * Emergency contacts visible on header for quick access.
+ * App Header — Modern Light Mode Navigation with Lucide Icons.
+ * Zero emojis, accessible semantics, responsive mobile drawer.
  */
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ROUTES, APP_NAME, EMERGENCY_CONTACTS } from "@/lib/constants";
+import {
+  Sparkles,
+  MapPin,
+  Calendar,
+  Users,
+  Bell,
+  ShieldAlert,
+  Bot,
+  LayoutDashboard,
+  UserCheck,
+  PhoneCall,
+  Menu,
+  X,
+} from "lucide-react";
+import { ROUTES, APP_NAME } from "@/lib/constants";
 
 const NAV_LINKS = [
-  { href: ROUTES.NAVIGATION, label: "Map", icon: "🗺️" },
-  { href: ROUTES.SESSIONS, label: "Sessions", icon: "📅" },
-  { href: ROUTES.CROWD, label: "Crowd", icon: "👥" },
-  { href: ROUTES.UPDATES, label: "Updates", icon: "📢" },
-  { href: ROUTES.EMERGENCY, label: "Emergency", icon: "🚨" },
-  { href: ROUTES.CHAT, label: "AI Chat", icon: "🤖" },
-  { href: ROUTES.DASHBOARD, label: "Dashboard", icon: "⚡" },
+  { href: ROUTES.NAVIGATION, label: "Map", icon: MapPin },
+  { href: ROUTES.SESSIONS, label: "Sessions", icon: Calendar },
+  { href: ROUTES.CROWD, label: "Crowd", icon: Users },
+  { href: ROUTES.REGISTER, label: "Register", icon: UserCheck },
+  { href: ROUTES.UPDATES, label: "Updates", icon: Bell },
+  { href: ROUTES.EMERGENCY, label: "Emergency", icon: ShieldAlert },
+  { href: ROUTES.CHAT, label: "AI Chat", icon: Bot },
+  { href: ROUTES.DASHBOARD, label: "Dashboard", icon: LayoutDashboard },
 ] as const;
 
-/** Main app navigation header. */
+/** Main app navigation header in clean Light Mode. */
 export function AppHeader() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,16 +47,31 @@ export function AppHeader() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: "rgba(10, 10, 15, 0.95)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
+        background: "rgba(255, 255, 255, 0.95)",
+        borderBottom: "1px solid var(--color-border)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        boxShadow: "var(--shadow-sm)",
       }}
       role="banner"
     >
-      <div className="container" style={{ display: "flex", alignItems: "center", height: "4.25rem", gap: "1rem" }}>
+      <div className="container" style={{ display: "flex", alignItems: "center", height: "4.5rem", gap: "1rem" }}>
         {/* Logo */}
-        <Link href={ROUTES.HOME} style={{ textDecoration: "none", flexShrink: 0 }}>
+        <Link href={ROUTES.HOME} style={{ textDecoration: "none", flexShrink: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <div
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "var(--radius-md)",
+              background: "var(--gradient-primary)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff",
+            }}
+          >
+            <Sparkles size={18} />
+          </div>
           <span
             style={{
               fontFamily: "var(--font-display)",
@@ -53,7 +83,7 @@ export function AppHeader() {
               backgroundClip: "text",
             }}
           >
-            ⚡ {APP_NAME}
+            {APP_NAME}
           </span>
         </Link>
 
@@ -63,7 +93,7 @@ export function AppHeader() {
           style={{ display: "flex", gap: "0.25rem", flex: 1, justifyContent: "center" }}
           className="desktop-nav"
         >
-          {NAV_LINKS.map(({ href, label, icon }) => {
+          {NAV_LINKS.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
             return (
               <Link
@@ -72,20 +102,20 @@ export function AppHeader() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.35rem",
-                  padding: "0.375rem 0.75rem",
+                  gap: "0.4rem",
+                  padding: "0.4rem 0.75rem",
                   borderRadius: "var(--radius-md)",
                   textDecoration: "none",
                   fontSize: "0.85rem",
-                  fontWeight: 500,
-                  color: isActive ? "var(--color-primary-light)" : "var(--color-text-secondary)",
-                  background: isActive ? "rgba(139,92,246,0.15)" : "transparent",
-                  border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
+                  fontWeight: 600,
+                  color: isActive ? "var(--color-primary)" : "var(--color-text-secondary)",
+                  background: isActive ? "rgba(79, 70, 229, 0.08)" : "transparent",
+                  border: isActive ? "1px solid rgba(79, 70, 229, 0.25)" : "1px solid transparent",
                   transition: "all 0.15s ease",
                 }}
                 aria-current={isActive ? "page" : undefined}
               >
-                <span aria-hidden="true">{icon}</span>
+                <Icon size={15} color={isActive ? "var(--color-primary)" : "currentColor"} />
                 {label}
               </Link>
             );
@@ -98,23 +128,23 @@ export function AppHeader() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "0.375rem",
-            padding: "0.375rem 0.875rem",
+            gap: "0.4rem",
+            padding: "0.35rem 0.85rem",
             borderRadius: "var(--radius-full)",
-            background: "rgba(239,68,68,0.15)",
-            border: "1px solid rgba(239,68,68,0.4)",
-            color: "#f87171",
+            background: "rgba(220, 38, 38, 0.08)",
+            border: "1px solid rgba(220, 38, 38, 0.25)",
+            color: "var(--color-danger)",
             textDecoration: "none",
             fontSize: "0.8rem",
             fontWeight: 700,
             flexShrink: 0,
           }}
-          aria-label={`Call emergency services ${EMERGENCY_CONTACTS[0].number}`}
+          aria-label="Call emergency services 112"
         >
-          🚨 <span>112</span>
+          <PhoneCall size={14} /> <span>112</span>
         </a>
 
-        {/* Mobile menu button */}
+        {/* Mobile menu toggle */}
         <button
           onClick={() => setMobileOpen((o) => !o)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -127,12 +157,13 @@ export function AppHeader() {
             borderRadius: "var(--radius-sm)",
             color: "var(--color-text-primary)",
             cursor: "pointer",
-            padding: "0.4rem 0.6rem",
-            fontSize: "1.1rem",
+            padding: "0.4rem 0.5rem",
             display: "none",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {mobileOpen ? "✕" : "☰"}
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
@@ -142,15 +173,16 @@ export function AppHeader() {
           id="mobile-nav"
           aria-label="Mobile navigation"
           style={{
-            background: "var(--color-bg-2)",
+            background: "#ffffff",
             borderTop: "1px solid var(--color-border)",
             padding: "1rem",
             display: "flex",
             flexDirection: "column",
             gap: "0.5rem",
+            boxShadow: "var(--shadow-lg)",
           }}
         >
-          {NAV_LINKS.map(({ href, label, icon }) => (
+          {NAV_LINKS.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
@@ -162,13 +194,14 @@ export function AppHeader() {
                 padding: "0.75rem 1rem",
                 borderRadius: "var(--radius-md)",
                 textDecoration: "none",
-                color: pathname === href ? "var(--color-primary-light)" : "var(--color-text-primary)",
-                background: pathname === href ? "rgba(139,92,246,0.1)" : "transparent",
-                fontWeight: 500,
+                color: pathname === href ? "var(--color-primary)" : "var(--color-text-primary)",
+                background: pathname === href ? "rgba(79, 70, 229, 0.08)" : "transparent",
+                fontWeight: 600,
+                fontSize: "0.9rem",
               }}
               aria-current={pathname === href ? "page" : undefined}
             >
-              <span aria-hidden="true">{icon}</span>
+              <Icon size={18} />
               {label}
             </Link>
           ))}
@@ -176,7 +209,7 @@ export function AppHeader() {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .desktop-nav { display: none !important; }
           .mobile-menu-btn { display: flex !important; }
         }

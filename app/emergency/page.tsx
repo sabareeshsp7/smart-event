@@ -1,50 +1,88 @@
 import type { Metadata } from "next";
-import { EMERGENCY_CONTACTS } from "@/lib/constants";
+import {
+  ShieldAlert,
+  PhoneCall,
+  HeartPulse,
+  Shield,
+  Flame,
+  Info,
+  Search,
+  Building2,
+  AlertTriangle,
+  Phone,
+  CheckCircle2,
+} from "lucide-react";
+import { EMERGENCY_CONTACTS, VENUE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Emergency SOS & Safety",
+  title: "Emergency SOS & Venue Safety",
   description:
-    "Quick access to emergency contacts (112, 108, 100), first aid locations, security, and safety information.",
+    "Direct speed dial for emergency services (112, 108, 100), medical first aid locations, security dispatch, and evacuation protocols.",
 };
 
 const SAFETY_LOCATIONS = [
-  { name: "First Aid Station A", zone: "Near Main Entrance", icon: "💊", available: true },
-  { name: "First Aid Station B", zone: "Food Court Area", icon: "💊", available: true },
-  { name: "Security Desk", zone: "Registration Area", icon: "🛡️", available: true },
-  { name: "Help Desk", zone: "Main Lobby", icon: "ℹ️", available: true },
-  { name: "Lost & Found", zone: "Registration Area", icon: "🔍", available: true },
-  { name: "Medical Bay", zone: "VIP Lounge (Staff)", icon: "🏥", available: true },
+  { name: "Primary First Aid Wing", zone: "East Wing near Gate 2", icon: HeartPulse, available: true },
+  { name: "Medical Aid Post B", zone: "South Food Concourse", icon: HeartPulse, available: true },
+  { name: "Central Security Control", zone: "Main Galleria Turnstiles", icon: Shield, available: true },
+  { name: "Attendee Information Hub", zone: "Central Entrance Plaza", icon: Info, available: true },
+  { name: "Lost & Found Centre", zone: "Registration Hall A", icon: Search, available: true },
+  { name: "Emergency Dispatch Bay", zone: "Gate 1 Logistics Bay", icon: Building2, available: true },
 ] as const;
 
 const EMERGENCY_STEPS = [
-  { step: "1", title: "Stay Calm", desc: "Take a breath. Assess the situation before acting." },
-  { step: "2", title: "Call 112", desc: "For medical, fire, or police emergencies. Available 24/7." },
-  { step: "3", title: "Alert Staff", desc: "Find the nearest event staff member (identified by orange vest)." },
-  { step: "4", title: "Go to Safety", desc: "Follow emergency exit signs. Do not use elevators during fire." },
-  { step: "5", title: "Assemble Point", desc: "Meet at the designated assembly point near the Main Entrance." },
+  { step: "1", title: "Stay Calm & Assess", desc: "Evaluate immediate danger before acting. Avoid crowding corridors." },
+  { step: "2", title: "Dial 112 Speedline", desc: "Integrated police, medical, and fire emergency dispatch. 24/7 on-site response." },
+  { step: "3", title: "Notify Floor Marshals", desc: "Locate venue staff wearing high-visibility orange safety lanyards." },
+  { step: "4", title: "Follow Illuminated Exits", desc: "Follow green emergency exit markers. Do not use passenger elevators during an alarm." },
+  { step: "5", title: "Proceed to Assembly Zone", desc: "Assemble at the open paved plaza situated outside Main Entrance Gate A." },
 ] as const;
 
-/** Emergency & SOS page. */
+/** Emergency & SOS page in Light Mode with zero emojis. */
 export default function EmergencyPage() {
+  const getContactIcon = (number: string) => {
+    if (number === "112") return <ShieldAlert size={22} color="var(--color-danger)" />;
+    if (number === "108") return <HeartPulse size={22} color="var(--color-danger)" />;
+    if (number === "100") return <Shield size={22} color="var(--color-danger)" />;
+    if (number === "101") return <Flame size={22} color="var(--color-danger)" />;
+    return <PhoneCall size={22} color="var(--color-danger)" />;
+  };
+
   return (
     <div className="page-wrapper">
-      <div className="container" style={{ paddingTop: "2rem" }}>
+      <div className="container">
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
+        <div style={{ marginBottom: "2.5rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.25rem 0.75rem",
+              borderRadius: "var(--radius-full)",
+              background: "rgba(220, 38, 38, 0.08)",
+              color: "var(--color-danger)",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            <ShieldAlert size={14} /> Immediate Incident Response
+          </div>
           <h1 className="section-title">
-            🚨 Emergency <span className="gradient-text" style={{ background: "linear-gradient(135deg,#ef4444,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>SOS & Safety</span>
+            Emergency <span className="gradient-text" style={{ background: "linear-gradient(135deg, #dc2626, #ea580c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>SOS &amp; Safety</span>
           </h1>
-          <p className="section-subtitle">
-            Quick access to emergency contacts, first aid, and safety procedures
+          <p className="section-subtitle" style={{ marginBottom: "0.5rem" }}>
+            24/7 rapid dispatch contacts, first aid posts, and evacuation procedures for {VENUE_NAME}
           </p>
         </div>
 
-        {/* SOS Quick Dial */}
-        <section aria-labelledby="sos-heading" style={{ marginBottom: "3rem" }}>
-          <h2 id="sos-heading" style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>
-            ☎️ Emergency Quick Dial
+        {/* SOS Emergency Speed Dial */}
+        <section aria-labelledby="sos-heading" style={{ marginBottom: "3.5rem" }}>
+          <h2 id="sos-heading" style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <PhoneCall size={18} color="var(--color-danger)" /> Rapid Speed Dial Directory
           </h2>
-          <div className="grid-2" style={{ marginBottom: "1.5rem" }}>
+
+          <div className="grid-2" style={{ gap: "1.25rem", marginBottom: "2.5rem" }}>
             {EMERGENCY_CONTACTS.map((contact) => (
               <a
                 key={contact.number}
@@ -53,42 +91,58 @@ export default function EmergencyPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "1rem",
-                  padding: "1.25rem 1.5rem",
+                  gap: "1.25rem",
+                  padding: "1.5rem",
                   textDecoration: "none",
-                  borderColor: "rgba(239,68,68,0.3)",
-                  background: "rgba(239,68,68,0.06)",
+                  border: "1px solid rgba(220, 38, 38, 0.2)",
+                  background: "#ffffff",
                 }}
                 aria-label={`Call ${contact.label}: ${contact.number}`}
               >
                 <div
                   style={{
-                    width: "3rem",
-                    height: "3rem",
+                    width: "3.25rem",
+                    height: "3.25rem",
                     borderRadius: "var(--radius-md)",
-                    background: "rgba(239,68,68,0.2)",
+                    background: "rgba(220, 38, 38, 0.08)",
+                    border: "1px solid rgba(220, 38, 38, 0.2)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1.5rem",
                     flexShrink: 0,
                   }}
                   aria-hidden="true"
                 >
-                  {contact.icon}
+                  {getContactIcon(contact.number)}
                 </div>
-                <div>
-                  <div style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>{contact.label}</div>
-                  <div style={{ color: "#f87171", fontWeight: 800, fontSize: "1.4rem", lineHeight: 1.2 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>
+                    {contact.label}
+                  </div>
+                  <div style={{ color: "var(--color-danger)", fontWeight: 800, fontSize: "1.45rem", lineHeight: 1.2 }}>
                     {contact.number}
                   </div>
                 </div>
-                <div style={{ marginLeft: "auto", color: "#f87171", fontSize: "1.25rem" }} aria-hidden="true">📞</div>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    background: "rgba(220, 38, 38, 0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-danger)",
+                  }}
+                  aria-hidden="true"
+                >
+                  <Phone size={16} />
+                </div>
               </a>
             ))}
           </div>
 
-          {/* SOS Button */}
+          {/* Primary SOS Action Dial Button */}
           <div style={{ textAlign: "center" }}>
             <a
               href="tel:112"
@@ -98,59 +152,103 @@ export default function EmergencyPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.75rem",
-                padding: "1.25rem 3rem",
+                padding: "1.15rem 3.5rem",
                 borderRadius: "var(--radius-full)",
                 background: "var(--color-danger)",
-                color: "white",
-                fontWeight: 900,
-                fontSize: "1.5rem",
+                color: "#ffffff",
+                fontWeight: 800,
+                fontSize: "1.35rem",
                 textDecoration: "none",
-                boxShadow: "0 0 40px rgba(239,68,68,0.4)",
+                boxShadow: "0 10px 30px rgba(220, 38, 38, 0.35)",
               }}
-              aria-label="Call SOS emergency services 112"
+              aria-label="Call national emergency helpline 112"
             >
-              🚨 SOS — CALL 112
+              <ShieldAlert size={26} /> CALL 112 DISPATCH
             </a>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginTop: "0.75rem" }}>
-              Tap to call emergency services immediately
+            <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginTop: "0.85rem" }}>
+              Direct connection to medical, police, and disaster response authorities.
             </p>
           </div>
         </section>
 
-        <div className="grid-2">
-          {/* Safety Locations */}
+        <div className="grid-2" style={{ gap: "2rem" }}>
+          {/* First Aid & Safety Stations */}
           <section aria-labelledby="safety-locations-heading">
-            <h2 id="safety-locations-heading" style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "1rem" }}>
-              📍 Safety Locations
+            <h2 id="safety-locations-heading" style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <HeartPulse size={18} color="var(--color-danger)" /> On-Site Medical &amp; Safety Posts
             </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {SAFETY_LOCATIONS.map((loc) => (
-                <div key={loc.name} className="glass-card" style={{ padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <span style={{ fontSize: "1.4rem" }} aria-hidden="true">{loc.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{loc.name}</div>
-                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>{loc.zone}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {SAFETY_LOCATIONS.map((loc) => {
+                const Icon = loc.icon;
+                return (
+                  <div
+                    key={loc.name}
+                    className="glass-card"
+                    style={{
+                      padding: "1.15rem 1.25rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      background: "#ffffff",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "var(--radius-sm)",
+                        background: "rgba(220, 38, 38, 0.08)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--color-danger)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={18} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-text-primary)" }}>
+                        {loc.name}
+                      </div>
+                      <div style={{ color: "var(--color-text-secondary)", fontSize: "0.825rem" }}>
+                        {loc.zone}
+                      </div>
+                    </div>
+                    <span className="badge badge-success" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <CheckCircle2 size={12} /> Staffed
+                    </span>
                   </div>
-                  <span className="badge badge-success" aria-label="Available">Available</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
-          {/* Emergency Steps */}
+          {/* Emergency Evacuation Protocol */}
           <section aria-labelledby="emergency-steps-heading">
-            <h2 id="emergency-steps-heading" style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "1rem" }}>
-              📋 Emergency Procedure
+            <h2 id="emergency-steps-heading" style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Shield size={18} color="var(--color-primary)" /> Evacuation Guidelines
             </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
               {EMERGENCY_STEPS.map((s) => (
-                <div key={s.step} className="glass-card" style={{ padding: "1rem 1.25rem", display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+                <div
+                  key={s.step}
+                  className="glass-card"
+                  style={{
+                    padding: "1.15rem 1.25rem",
+                    display: "flex",
+                    gap: "1rem",
+                    alignItems: "flex-start",
+                    background: "#ffffff",
+                  }}
+                >
                   <div
                     style={{
                       width: "2rem",
                       height: "2rem",
                       borderRadius: "50%",
                       background: "var(--gradient-primary)",
+                      color: "#ffffff",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -163,8 +261,12 @@ export default function EmergencyPage() {
                     {s.step}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: "0.9rem" }}>{s.title}</div>
-                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginTop: "0.2rem" }}>{s.desc}</div>
+                    <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-text-primary)" }}>
+                      {s.title}
+                    </div>
+                    <div style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginTop: "0.2rem", lineHeight: 1.5 }}>
+                      {s.desc}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -172,23 +274,25 @@ export default function EmergencyPage() {
           </section>
         </div>
 
-        {/* Assembly point notice */}
+        {/* Assembly Point Alert Strip */}
         <div
           className="alert-banner"
           style={{
-            marginTop: "2rem",
-            background: "rgba(245,158,11,0.1)",
-            borderColor: "rgba(245,158,11,0.3)",
+            marginTop: "2.5rem",
+            background: "rgba(217, 119, 6, 0.08)",
+            borderColor: "rgba(217, 119, 6, 0.25)",
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
           }}
           role="note"
-          aria-label="Assembly point information"
+          aria-label="Assembly point notification"
         >
-          <span aria-hidden="true" style={{ fontSize: "1.25rem" }}>⚠️</span>
+          <AlertTriangle size={22} color="var(--color-warning)" style={{ flexShrink: 0 }} />
           <div>
-            <strong style={{ color: "#fbbf24" }}>Emergency Assembly Point:</strong>
-            <span style={{ color: "var(--color-text-secondary)", marginLeft: "0.5rem" }}>
-              Proceed to the open area near the <strong>Main Entrance (Gate A)</strong>. Follow staff in orange vests.
-              Emergency number: <a href="tel:112" style={{ color: "#f87171", fontWeight: 700 }}>112</a>
+            <strong style={{ color: "var(--color-warning)" }}>Designated Emergency Assembly Ground:</strong>
+            <span style={{ color: "var(--color-text-secondary)", marginLeft: "0.5rem", fontSize: "0.9rem" }}>
+              Proceed immediately to the open paved concourse situated outside <strong>Main Entrance (Gate A)</strong>. Follow instructions from Floor Marshals in orange vests.
             </span>
           </div>
         </div>

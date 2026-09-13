@@ -98,9 +98,17 @@ export function useChatStream(): UseChatStreamReturn {
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const data = line.slice(6).trim();
-            if (data === "[DONE]") continue;
-            accumulated += data;
+            const rawData = line.slice(6);
+            if (rawData.trim() === "[DONE]") continue;
+            if (rawData.trim() === "[RATE_LIMITED]") {
+              throw new Error("Rate limit exceeded. Please wait a moment.");
+            }
+            if (rawData.trim() === "[ERROR]") {
+              throw new Error("Unable to stream AI response. Please retry.");
+            }
+            // Unescape escaped newlines, preserve word spaces
+            const token = rawData.replace(/\\n/g, "\n");
+            accumulated += token;
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId

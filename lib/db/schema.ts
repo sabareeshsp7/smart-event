@@ -50,6 +50,21 @@ function createTables(db: Database.Database): void {
       result TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS attendees (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      phone TEXT,
+      company TEXT,
+      role TEXT,
+      badge_type TEXT NOT NULL DEFAULT 'General Attendee',
+      interests TEXT NOT NULL DEFAULT '[]',
+      dietary_pref TEXT DEFAULT 'Standard',
+      accessibility_needs TEXT DEFAULT 'None',
+      qr_code TEXT,
+      registered_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 }
 
@@ -115,6 +130,22 @@ export function seedDatabase(db: Database.Database): void {
       const occupancy = Math.floor(Math.random() * capacity * 0.85);
       insertCrowd.run(`cz${i + 1}`, zone, occupancy, capacity);
     });
+
+    const insertAttendee = db.prepare(`
+      INSERT OR IGNORE INTO attendees (id, name, email, phone, company, role, badge_type, interests, dietary_pref, accessibility_needs, qr_code)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const DEMO_ATTENDEES = [
+      { id: "att_101", name: "Dr. Aditi Rao", email: "aditi.rao@iisc.ac.in", phone: "+91 98860 12345", company: "IISc Bangalore", role: "AI Research Lead", badge: "VIP / Speaker", interests: ["AI & ML", "Data Science"], diet: "Vegetarian", a11y: "None", qr: "QR-ATT-101-VIP" },
+      { id: "att_102", name: "Karthik Venkat", email: "karthik.v@infosys.com", phone: "+91 99000 54321", company: "Infosys Labs", role: "Principal Architect", badge: "Delegate", interests: ["Cloud", "DevOps"], diet: "Standard", a11y: "None", qr: "QR-ATT-102-DEL" },
+      { id: "att_103", name: "Sneha Murthy", email: "sneha.m@phonepe.com", phone: "+91 97400 98765", company: "PhonePe", role: "VP of Product", badge: "VIP / Speaker", interests: ["Fintech", "Leadership"], diet: "Vegan", a11y: "Wheelchair Ramp Access", qr: "QR-ATT-103-VIP" },
+      { id: "att_104", name: "Tanmay Joshi", email: "tanmay@neuralstack.io", phone: "+91 98450 11223", company: "NeuralStack AI", role: "Founder & CEO", badge: "All-Access Pass", interests: ["AI & ML", "Startup"], diet: "Standard", a11y: "None", qr: "QR-ATT-104-ALL" },
+    ];
+
+    for (const a of DEMO_ATTENDEES) {
+      insertAttendee.run(a.id, a.name, a.email, a.phone, a.company, a.role, a.badge, JSON.stringify(a.interests), a.diet, a.a11y, a.qr);
+    }
   });
 
   seedAll();

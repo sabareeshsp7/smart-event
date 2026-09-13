@@ -1,11 +1,22 @@
 "use client";
 /**
  * Real-time Updates page — live alerts and announcements with aria-live.
- * RULE A11Y-9: Dynamic content updates use aria-live="polite".
+ * Clean light mode aesthetic with Lucide icons and zero emojis.
  */
 
 import { useState, useEffect } from "react";
-import { API_ROUTES, EMERGENCY_CONTACTS } from "@/lib/constants";
+import { API_ROUTES, EMERGENCY_CONTACTS, VENUE_NAME } from "@/lib/constants";
+import {
+  RefreshCw,
+  Info,
+  AlertTriangle,
+  AlertOctagon,
+  ShieldAlert,
+  CheckCircle2,
+  MapPin,
+  PhoneCall,
+  Radio,
+} from "lucide-react";
 
 interface Alert {
   id: string;
@@ -18,17 +29,41 @@ interface Alert {
 }
 
 const SEVERITY_CONFIG = {
-  low: { color: "#10b981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.3)", icon: "ℹ️", label: "Info" },
-  medium: { color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.3)", icon: "⚠️", label: "Warning" },
-  high: { color: "#ef4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.3)", icon: "🔴", label: "High" },
-  critical: { color: "#dc2626", bg: "rgba(220,38,38,0.15)", border: "rgba(220,38,38,0.5)", icon: "🚨", label: "Critical" },
+  low: {
+    color: "#059669",
+    bg: "#ecfdf5",
+    border: "#a7f3d0",
+    icon: Info,
+    label: "Notice",
+  },
+  medium: {
+    color: "#d97706",
+    bg: "#fffbeb",
+    border: "#fde68a",
+    icon: AlertTriangle,
+    label: "Advisory",
+  },
+  high: {
+    color: "#e11d48",
+    bg: "#fff1f2",
+    border: "#fecdd3",
+    icon: AlertOctagon,
+    label: "High Priority",
+  },
+  critical: {
+    color: "#b91c1c",
+    bg: "#fef2f2",
+    border: "#fca5a5",
+    icon: ShieldAlert,
+    label: "Critical Alert",
+  },
 } as const;
 
-/** Real-time updates page. */
 export default function UpdatesPage() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     void loadAlerts();
@@ -37,23 +72,34 @@ export default function UpdatesPage() {
   }, []);
 
   const loadAlerts = async () => {
+    setIsRefreshing(true);
     try {
       const res = await fetch(API_ROUTES.ALERTS);
       if (!res.ok) return;
-      const data = await res.json() as { alerts: Alert[] };
+      const data = (await res.json()) as { alerts: Alert[] };
       setAlerts(data.alerts);
-      setLastUpdated(new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setLastUpdated(
+        new Date().toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
     } catch {
       /* ignore */
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
   const formatTime = (iso: string) => {
     try {
       return new Date(iso).toLocaleString("en-IN", {
-        month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
       return iso;
@@ -61,36 +107,70 @@ export default function UpdatesPage() {
   };
 
   return (
-    <div className="page-wrapper">
-      <div className="container" style={{ paddingTop: "2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-          <h1 className="section-title">
-            📢 Real-Time <span className="gradient-text">Updates</span>
-          </h1>
-          <button onClick={() => void loadAlerts()} className="btn btn-ghost btn-sm" aria-label="Refresh alerts">
-            🔄 Refresh
+    <div className="page-wrapper" style={{ background: "var(--color-bg)", minHeight: "100vh" }}>
+      <div className="container" style={{ paddingTop: "2.5rem", paddingBottom: "4rem" }}>
+        
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.35rem 0.85rem", borderRadius: "9999px", background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)", color: "#4f46e5", fontSize: "0.8rem", fontWeight: 700, marginBottom: "0.75rem" }}>
+              <Radio size={15} className="animate-pulse" />
+              <span>Real-Time Broadcast Dispatch · {VENUE_NAME}</span>
+            </div>
+            <h1 className="section-title" style={{ fontSize: "2.2rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", marginBottom: "0.5rem" }}>
+              Live Announcements & <span className="gradient-text">Updates</span>
+            </h1>
+            <p className="section-subtitle" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>
+              Verified schedule announcements, corridor congestion alerts, and security advisories · Syncs every 15s
+            </p>
+          </div>
+
+          <button
+            onClick={() => void loadAlerts()}
+            disabled={isRefreshing}
+            className="btn btn-ghost"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "#ffffff",
+              border: "1px solid var(--color-border)",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+            }}
+            aria-label="Refresh alerts"
+          >
+            <RefreshCw size={16} className={isRefreshing ? "spin-animation" : ""} />
+            <span>{isRefreshing ? "Refreshing..." : "Refresh Feed"}</span>
           </button>
         </div>
-        <p className="section-subtitle">
-          Live announcements, schedule changes, and safety alerts · Auto-refreshes every 15s
-          {lastUpdated && <span style={{ marginLeft: "0.5rem", color: "var(--color-text-muted)" }}>· Updated: {lastUpdated}</span>}
-        </p>
 
-        {/* Live indicator */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "2rem" }}>
+        {/* Live sync pulse strip */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem", padding: "0.5rem 1rem", background: "#f8fafc", borderRadius: "0.5rem", border: "1px solid #e2e8f0" }}>
           <div
-            style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981", animation: "pulse-ring 1.5s ease-in-out infinite" }}
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              background: "#10b981",
+              boxShadow: "0 0 0 4px rgba(16,185,129,0.2)",
+            }}
             aria-hidden="true"
           />
-          <span style={{ color: "#34d399", fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-            LIVE
+          <span style={{ color: "#059669", fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Live Stream Active
           </span>
+          {lastUpdated && (
+            <span style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginLeft: "auto" }}>
+              Last synchronized at {lastUpdated}
+            </span>
+          )}
         </div>
 
+        {/* Alerts Content */}
         {loading ? (
           <div style={{ textAlign: "center", padding: "4rem" }}>
             <div className="spinner" style={{ width: "2rem", height: "2rem", margin: "0 auto" }} role="status" aria-label="Loading alerts" />
-            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem" }}>Loading updates...</p>
+            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem" }}>Polling venue broadcast nodes...</p>
           </div>
         ) : (
           <section
@@ -102,54 +182,106 @@ export default function UpdatesPage() {
             <h2 id="alerts-heading" className="sr-only">Live alerts and announcements</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {alerts.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "4rem", color: "var(--color-text-muted)" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "1rem" }} aria-hidden="true">✅</div>
-                  <p style={{ fontWeight: 600 }}>No active alerts</p>
-                  <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>The event is running smoothly!</p>
+                <div className="glass-card" style={{ textAlign: "center", padding: "4rem 2rem", color: "var(--color-text-muted)" }}>
+                  <div style={{ width: "3.5rem", height: "3.5rem", borderRadius: "50%", background: "#ecfdf5", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem auto", color: "#059669" }}>
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-text)", marginBottom: "0.25rem" }}>
+                    All Systems Normal
+                  </h3>
+                  <p style={{ fontSize: "0.9rem", color: "var(--color-text-secondary)", margin: 0 }}>
+                    No urgent advisories or session delays currently reported. Enjoy your experience at {VENUE_NAME}!
+                  </p>
                 </div>
               ) : (
                 alerts.map((alert) => {
                   const config = SEVERITY_CONFIG[alert.severity] ?? SEVERITY_CONFIG.low;
+                  const IconComp = config.icon;
                   return (
                     <article
                       key={alert.id}
-                      className="alert-banner"
-                      style={{ background: config.bg, borderColor: config.border }}
+                      className="glass-card"
+                      style={{
+                        padding: "1.25rem 1.5rem",
+                        background: config.bg,
+                        border: `1px solid ${config.border}`,
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "1.25rem",
+                      }}
                       role="alert"
                       aria-label={`${config.label} alert: ${alert.title}`}
                     >
-                      <span style={{ fontSize: "1.5rem", flexShrink: 0 }} aria-hidden="true">{config.icon}</span>
+                      <div
+                        style={{
+                          width: "2.75rem",
+                          height: "2.75rem",
+                          borderRadius: "0.5rem",
+                          background: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: config.color,
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                          flexShrink: 0,
+                        }}
+                        aria-hidden="true"
+                      >
+                        <IconComp size={22} />
+                      </div>
+
                       <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.375rem", flexWrap: "wrap", gap: "0.5rem" }}>
-                          <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: config.color }}>{alert.title}</h3>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.35rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: config.color, margin: 0 }}>
+                            {alert.title}
+                          </h3>
                           <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexShrink: 0 }}>
                             <span
                               style={{
-                                padding: "0.15rem 0.5rem",
-                                borderRadius: "var(--radius-full)",
-                                background: `${config.color}20`,
+                                padding: "0.15rem 0.55rem",
+                                borderRadius: "9999px",
+                                background: "#ffffff",
                                 color: config.color,
                                 fontSize: "0.7rem",
                                 fontWeight: 700,
                                 textTransform: "uppercase",
-                                border: `1px solid ${config.color}40`,
+                                border: `1px solid ${config.border}`,
                               }}
                             >
                               {config.label}
                             </span>
-                            <span style={{ color: "var(--color-text-muted)", fontSize: "0.75rem" }}>{formatTime(alert.created_at)}</span>
+                            <span style={{ color: "var(--color-text-muted)", fontSize: "0.75rem" }}>
+                              {formatTime(alert.created_at)}
+                            </span>
                           </div>
                         </div>
-                        <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", marginBottom: "0.375rem" }}>
+
+                        <p style={{ color: "var(--color-text)", fontSize: "0.9rem", lineHeight: 1.5, marginBottom: "0.5rem" }}>
                           {alert.message}
                         </p>
-                        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                          <span style={{ color: "var(--color-text-muted)", fontSize: "0.75rem" }}>📍 {alert.zone}</span>
-                          {alert.severity === "critical" || alert.severity === "high" ? (
-                            <a href="tel:112" style={{ color: "#f87171", fontSize: "0.75rem", fontWeight: 700, textDecoration: "none" }}>
-                              🚨 Call 112 if emergency
+
+                        <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+                          <span style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+                            <MapPin size={13} color="#6366f1" />
+                            {alert.zone}
+                          </span>
+                          {(alert.severity === "critical" || alert.severity === "high") && (
+                            <a
+                              href="tel:112"
+                              style={{
+                                color: "#b91c1c",
+                                fontSize: "0.8rem",
+                                fontWeight: 700,
+                                textDecoration: "none",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.3rem",
+                              }}
+                            >
+                              <PhoneCall size={13} />
+                              Dial 112 for Security Dispatch
                             </a>
-                          ) : null}
+                          )}
                         </div>
                       </div>
                     </article>
@@ -160,16 +292,29 @@ export default function UpdatesPage() {
           </section>
         )}
 
-        {/* Emergency strip */}
+        {/* Emergency Contact Bar */}
         <div
-          style={{ marginTop: "2.5rem", padding: "1rem 1.5rem", borderRadius: "var(--radius-md)", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}
+          style={{
+            marginTop: "3rem",
+            padding: "1rem 1.5rem",
+            borderRadius: "0.5rem",
+            background: "#fff1f2",
+            border: "1px solid #fecdd3",
+            display: "flex",
+            gap: "1.5rem",
+            flexWrap: "wrap",
+            alignItems: "center"
+          }}
           role="complementary"
           aria-label="Emergency contacts"
         >
-          <span style={{ color: "#f87171", fontWeight: 700, fontSize: "0.85rem" }}>🚨 Emergency:</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#e11d48", fontWeight: 700, fontSize: "0.85rem" }}>
+            <PhoneCall size={16} />
+            <span>Emergency Rapid Line:</span>
+          </div>
           {EMERGENCY_CONTACTS.slice(0, 4).map((c) => (
-            <a key={c.number} href={`tel:${c.number}`} style={{ color: "#f87171", fontWeight: 700, fontSize: "0.875rem", textDecoration: "none" }}>
-              {c.icon} {c.number}
+            <a key={c.number} href={`tel:${c.number}`} style={{ color: "#be123c", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
+              {c.label}: {c.number}
             </a>
           ))}
         </div>

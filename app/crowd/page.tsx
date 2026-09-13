@@ -1,12 +1,20 @@
 "use client";
 /**
- * Crowd Heatmap page — real-time crowd levels with Gemini risk assessment.
- * RULE GS-1: Gemini used for crowd risk scoring (Feature 2).
- * RULE INN-1: Animated risk score counter.
+ * Crowd Heatmap page — Real-time crowd levels with Gemini risk assessment.
+ * Light mode theme with Lucide icons and zero emojis.
+ * Auto-refreshes every 30s.
  */
 
 import { useState, useEffect } from "react";
 import { animate } from "framer-motion";
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Sparkles,
+  PhoneCall,
+  ShieldAlert,
+} from "lucide-react";
 import { API_ROUTES } from "@/lib/constants";
 import type { CrowdRiskLevel } from "@/lib/utils/crowd";
 
@@ -27,17 +35,17 @@ interface GeminiRiskAssessment {
 }
 
 const RISK_COLORS: Record<string, string> = {
-  low: "#10b981",
-  medium: "#f59e0b",
-  high: "#ef4444",
-  critical: "#dc2626",
+  low: "#059669",
+  medium: "#d97706",
+  high: "#dc2626",
+  critical: "#b91c1c",
 };
 
 function OccupancyBar({ pct, risk }: { pct: number; risk: string }) {
-  const color = RISK_COLORS[risk] ?? "#8b5cf6";
+  const color = RISK_COLORS[risk] ?? "var(--color-primary)";
   return (
     <div
-      style={{ height: "6px", background: "rgba(255,255,255,0.08)", borderRadius: "3px", overflow: "hidden" }}
+      style={{ height: "6px", background: "var(--color-bg-3)", borderRadius: "3px", overflow: "hidden" }}
       role="progressbar"
       aria-valuenow={pct}
       aria-valuemin={0}
@@ -57,7 +65,7 @@ function OccupancyBar({ pct, risk }: { pct: number; risk: string }) {
   );
 }
 
-/** Crowd heatmap page. */
+/** Crowd heatmap page in Light Mode with zero emojis. */
 export default function CrowdPage() {
   const [zones, setZones] = useState<CrowdZone[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +83,7 @@ export default function CrowdPage() {
     try {
       const res = await fetch(API_ROUTES.CROWD);
       if (!res.ok) return;
-      const data = await res.json() as { zones: CrowdZone[] };
+      const data = (await res.json()) as { zones: CrowdZone[] };
       setZones(data.zones);
       void loadRiskAssessment(data.zones);
     } catch {
@@ -100,9 +108,8 @@ export default function CrowdPage() {
         }),
       });
       if (res.ok) {
-        const data = await res.json() as GeminiRiskAssessment;
+        const data = (await res.json()) as GeminiRiskAssessment;
         setRiskData(data);
-        // Animate score counter using Framer Motion
         animate(0, data.riskScore, {
           duration: 1.5,
           ease: "easeOut",
@@ -126,37 +133,54 @@ export default function CrowdPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="container" style={{ paddingTop: "2rem" }}>
-        <h1 className="section-title">
-          👥 Crowd <span className="gradient-text">Heatmap</span>
-        </h1>
-        <p className="section-subtitle">
-          Real-time occupancy levels across all venue zones · Auto-refreshes every 30s
-        </p>
-
-        {/* Gemini Risk Overview */}
-        {(riskLoading || riskData) && (
+      <div className="container">
+        {/* Header */}
+        <div style={{ marginBottom: "2rem" }}>
           <div
             style={{
-              padding: "1.5rem",
-              borderRadius: "var(--radius-lg)",
-              background:
-                "linear-gradient(135deg,rgba(66,133,244,0.08),rgba(52,168,83,0.08),rgba(251,188,5,0.08),rgba(234,67,53,0.08))",
-              border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: "2rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.25rem 0.75rem",
+              borderRadius: "var(--radius-full)",
+              background: "rgba(5, 150, 105, 0.08)",
+              color: "var(--color-success)",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            <Activity size={14} /> Real-Time Telemetry
+          </div>
+          <h1 className="section-title">
+            Crowd <span className="gradient-text">Heatmap</span>
+          </h1>
+          <p className="section-subtitle" style={{ marginBottom: "0.5rem" }}>
+            Real-time venue density analytics across all 20 zones • Auto-refreshes every 30s
+          </p>
+        </div>
+
+        {/* Gemini AI Risk Overview Card */}
+        {(riskLoading || riskData) && (
+          <div
+            className="glass-card fade-in-up"
+            style={{
+              padding: "2rem",
+              background: "#ffffff",
+              border: "1px solid var(--color-border)",
+              marginBottom: "2.5rem",
               display: "flex",
-              gap: "2rem",
+              gap: "2.5rem",
               flexWrap: "wrap",
               alignItems: "center",
             }}
             aria-live="polite"
-            aria-label="AI crowd risk assessment"
           >
-            {/* Risk score dial */}
-            <div style={{ textAlign: "center", minWidth: "120px" }}>
+            {/* Risk Score Gauge */}
+            <div style={{ textAlign: "center", minWidth: "130px" }}>
               <div
                 style={{
-                  fontSize: "3.5rem",
+                  fontSize: "3.75rem",
                   fontWeight: 900,
                   lineHeight: 1,
                   fontFamily: "var(--font-display)",
@@ -166,143 +190,159 @@ export default function CrowdPage() {
               >
                 {riskLoading ? "—" : animatedScore}
               </div>
-              <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Risk Score
+              <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: "0.25rem" }}>
+                Congestion Index
               </div>
             </div>
 
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
-                <span className="badge badge-gemini">✦ Google Gemini Analysis</span>
+                <span className="badge badge-gemini" style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                  <Sparkles size={13} /> Google Gemini Safety Assessment
+                </span>
                 {riskData && (
                   <span
                     style={{
                       padding: "0.2rem 0.75rem",
                       borderRadius: "var(--radius-full)",
-                      background: `${RISK_COLORS[riskData.overallRisk]}20`,
+                      background: `${RISK_COLORS[riskData.overallRisk]}15`,
                       color: RISK_COLORS[riskData.overallRisk],
                       fontWeight: 700,
-                      fontSize: "0.8rem",
+                      fontSize: "0.75rem",
                       textTransform: "uppercase",
-                      border: `1px solid ${RISK_COLORS[riskData.overallRisk]}40`,
+                      border: `1px solid ${RISK_COLORS[riskData.overallRisk]}35`,
                     }}
-                    aria-label={`Overall risk level: ${riskData.overallRisk}`}
                   >
-                    {riskData.overallRisk.toUpperCase()} RISK
+                    {riskData.overallRisk.toUpperCase()} CONGESTION
                   </span>
                 )}
               </div>
+
               {riskLoading ? (
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                   <div className="spinner" role="status" aria-label="Loading AI risk assessment" />
-                  <span style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>Gemini is analyzing crowd data...</span>
+                  <span style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>Gemini is computing zone bottlenecks...</span>
                 </div>
               ) : riskData ? (
                 <>
-                  <p style={{ color: "var(--color-text-secondary)", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
+                  <p style={{ color: "var(--color-text-primary)", marginBottom: "0.85rem", fontSize: "0.925rem", lineHeight: 1.6 }}>
                     {riskData.recommendation}
                   </p>
-                  {riskData.hotspots.length > 0 && (
-                    <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
-                      🔥 Hotspots: <strong style={{ color: "#f87171" }}>{riskData.hotspots.join(", ")}</strong>
-                    </div>
-                  )}
-                  {riskData.alternativeZones.length > 0 && (
-                    <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", marginTop: "0.25rem" }}>
-                      ✅ Quieter zones: <strong style={{ color: "#34d399" }}>{riskData.alternativeZones.join(", ")}</strong>
-                    </div>
-                  )}
+                  <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", fontSize: "0.85rem" }}>
+                    {riskData.hotspots.length > 0 && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--color-danger)" }}>
+                        <AlertTriangle size={15} />
+                        <span>High Traffic: <strong>{riskData.hotspots.join(", ")}</strong></span>
+                      </div>
+                    )}
+                    {riskData.alternativeZones.length > 0 && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--color-success)" }}>
+                        <CheckCircle2 size={15} />
+                        <span>Low Density: <strong>{riskData.alternativeZones.join(", ")}</strong></span>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : null}
             </div>
           </div>
         )}
 
-        {/* Loading */}
-        {loading && (
+        {/* Zones Grid */}
+        {loading && zones.length === 0 ? (
           <div style={{ textAlign: "center", padding: "4rem" }}>
-            <div className="spinner" style={{ width: "2rem", height: "2rem", margin: "0 auto" }} role="status" aria-label="Loading crowd data" />
-            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem" }}>Loading crowd data...</p>
+            <div className="spinner" style={{ width: "2rem", height: "2rem", margin: "0 auto" }} role="status" aria-label="Loading crowd telemetry" />
+            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem" }}>Streaming real-time telemetry from 20 venue zones...</p>
           </div>
-        )}
+        ) : (
+          <div className="grid-3" style={{ gap: "1.25rem" }}>
+          {zones.map((zone) => {
+            const pct = Math.round((zone.occupancy / zone.capacity) * 100);
+            const risk = getZoneRisk(zone);
+            const color = RISK_COLORS[risk];
 
-        {/* Zone grid */}
-        {!loading && (
-          <div className="grid-4">
-            {zones.map((zone) => {
-              const pct = Math.round((zone.occupancy / zone.capacity) * 100);
-              const risk = getZoneRisk(zone);
-              const color = RISK_COLORS[risk] ?? "#8b5cf6";
-
-              return (
-                <article
-                  key={zone.id}
-                  className="glass-card"
-                  style={{
-                    padding: "1.25rem",
-                    borderColor: `${color}30`,
-                  }}
-                  aria-label={`${zone.zone}: ${pct}% full, ${risk} risk`}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
-                    <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.3 }}>
+            return (
+              <div
+                key={zone.id}
+                className="glass-card"
+                style={{
+                  padding: "1.5rem",
+                  background: "#ffffff",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.85rem",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "0.2rem" }}>
                       {zone.zone}
-                    </h2>
-                    <span
-                      style={{
-                        padding: "0.15rem 0.5rem",
-                        borderRadius: "var(--radius-full)",
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        background: `${color}20`,
-                        color,
-                        border: `1px solid ${color}30`,
-                        textTransform: "uppercase",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {risk}
+                    </h3>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      Capacity: {zone.capacity.toLocaleString()} attendees
                     </span>
                   </div>
+                  <span
+                    style={{
+                      padding: "0.15rem 0.55rem",
+                      borderRadius: "var(--radius-full)",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      background: `${color}15`,
+                      color: color,
+                      border: `1px solid ${color}35`,
+                    }}
+                  >
+                    {risk}
+                  </span>
+                </div>
 
-                  <div style={{ fontSize: "2rem", fontWeight: 900, color, lineHeight: 1, marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>
-                    {pct}<span style={{ fontSize: "1rem", fontWeight: 600 }}>%</span>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "0.35rem", fontWeight: 600 }}>
+                    <span style={{ color: "var(--color-text-secondary)" }}>{zone.occupancy} present</span>
+                    <span style={{ color }}>{pct}%</span>
                   </div>
-
                   <OccupancyBar pct={pct} risk={risk} />
-
-                  <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.5rem" }}>
-                    {zone.occupancy.toLocaleString()} / {zone.capacity.toLocaleString()} people
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
         )}
 
-        {/* Legend */}
+        {/* Emergency Footnote */}
         <div
           style={{
-            marginTop: "2rem",
+            marginTop: "2.5rem",
             padding: "1.25rem",
+            background: "rgba(220, 38, 38, 0.05)",
+            border: "1px solid rgba(220, 38, 38, 0.2)",
             borderRadius: "var(--radius-md)",
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
             display: "flex",
-            gap: "1.5rem",
-            flexWrap: "wrap",
+            justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
-          role="note"
-          aria-label="Risk level legend"
         >
-          <strong style={{ fontSize: "0.85rem" }}>Legend:</strong>
-          {Object.entries(RISK_COLORS).map(([level, color]) => (
-            <div key={level} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <div style={{ width: "12px", height: "12px", borderRadius: "3px", background: color }} aria-hidden="true" />
-              <span style={{ fontSize: "0.8rem", textTransform: "capitalize", color: "var(--color-text-secondary)" }}>{level}</span>
-            </div>
-          ))}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-danger)", fontWeight: 700, fontSize: "0.875rem" }}>
+            <ShieldAlert size={18} /> Venue Safety Protocol: Automatic bottleneck alerts are relayed to Hall Marshals in real-time.
+          </div>
+          <a
+            href="tel:112"
+            style={{
+              color: "var(--color-danger)",
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.35rem",
+            }}
+          >
+            <PhoneCall size={14} /> Immediate Assistance: 112
+          </a>
         </div>
       </div>
     </div>

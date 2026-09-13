@@ -1,10 +1,22 @@
 "use client";
 /**
- * Sessions page — searchable, filterable session grid.
+ * Sessions Discovery page — Searchable, filterable session schedule.
+ * Light mode theme with Lucide icons and zero emojis.
  * RULE EFF-10: useDebounce on search input.
  */
 
 import { useState, useEffect } from "react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  Star,
+  Sparkles,
+  Target,
+  X,
+  Search,
+} from "lucide-react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { API_ROUTES, SESSION_CATEGORIES } from "@/lib/constants";
 
@@ -24,13 +36,13 @@ interface Session {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Keynote: "#f59e0b",
-  Workshop: "#8b5cf6",
-  Panel: "#06b6d4",
-  "Lightning Talk": "#10b981",
-  Demo: "#ec4899",
-  Networking: "#3b82f6",
-  Awards: "#f97316",
+  Keynote: "#d97706",
+  Workshop: "#4f46e5",
+  Panel: "#0891b2",
+  "Lightning Talk": "#059669",
+  Demo: "#2563eb",
+  Networking: "#7c3aed",
+  Awards: "#ea580c",
 };
 
 function formatTime(iso: string): string {
@@ -41,7 +53,7 @@ function formatTime(iso: string): string {
   }
 }
 
-/** Sessions discovery page with search and filtering. */
+/** Sessions discovery page in Light Mode with zero emojis. */
 export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [total, setTotal] = useState(0);
@@ -69,7 +81,7 @@ export default function SessionsPage() {
         setSessions(data.sessions);
         setTotal(data.total);
       } catch {
-        // Fallback to empty
+        /* Fallback */
       } finally {
         setLoading(false);
       }
@@ -100,28 +112,58 @@ export default function SessionsPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="container" style={{ paddingTop: "2rem" }}>
-        <h1 className="section-title">
-          📅 Session <span className="gradient-text">Discovery</span>
-        </h1>
-        <p className="section-subtitle">Browse and search all {total} sessions</p>
+      <div className="container">
+        {/* Header */}
+        <div style={{ marginBottom: "2rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.25rem 0.75rem",
+              borderRadius: "var(--radius-full)",
+              background: "rgba(79, 70, 229, 0.08)",
+              color: "var(--color-primary)",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            <Calendar size={14} /> Schedule &amp; Keynotes
+          </div>
+          <h1 className="section-title">
+            Session <span className="gradient-text">Discovery</span>
+          </h1>
+          <p className="section-subtitle" style={{ marginBottom: "0.5rem" }}>
+            Browse, filter, and summarize {total} conference tracks and live workshops
+          </p>
+        </div>
 
         {/* Filters */}
         <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: "200px" }}>
-            <label htmlFor="session-search" className="input-label">Search sessions</label>
-            <input
-              id="session-search"
-              type="search"
-              className="input"
-              placeholder="Search by title, speaker, or topic..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label="Search sessions"
-            />
+          <div style={{ flex: 1, minWidth: "220px", position: "relative" }}>
+            <label htmlFor="session-search" className="input-label">
+              Search Agenda
+            </label>
+            <div style={{ position: "relative" }}>
+              <Search size={16} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
+              <input
+                id="session-search"
+                type="search"
+                className="input"
+                style={{ paddingLeft: "2.4rem" }}
+                placeholder="Search by topic, speaker, or hall..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search sessions"
+              />
+            </div>
           </div>
-          <div style={{ minWidth: "160px" }}>
-            <label htmlFor="category-filter" className="input-label">Category</label>
+
+          <div style={{ minWidth: "180px" }}>
+            <label htmlFor="category-filter" className="input-label">
+              Format / Category
+            </label>
             <select
               id="category-filter"
               className="input"
@@ -137,76 +179,94 @@ export default function SessionsPage() {
           </div>
         </div>
 
-        {/* Loading */}
+        {/* Loading Spinner */}
         {loading && (
           <div style={{ textAlign: "center", padding: "4rem" }}>
             <div className="spinner" style={{ width: "2rem", height: "2rem", margin: "0 auto" }} role="status" aria-label="Loading sessions" />
-            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem" }}>Loading sessions...</p>
+            <p style={{ color: "var(--color-text-muted)", marginTop: "1rem", fontSize: "0.9rem" }}>Loading agenda...</p>
           </div>
         )}
 
         {/* Session Grid */}
         {!loading && (
-          <div className="grid-3">
+          <div className="grid-3" style={{ gap: "1.5rem" }}>
             {sessions.map((session) => {
               const fillPct = Math.round((session.registered / session.capacity) * 100);
-              const color = CATEGORY_COLORS[session.category] ?? "#8b5cf6";
+              const color = CATEGORY_COLORS[session.category] ?? "var(--color-primary)";
               return (
                 <article
                   key={session.id}
                   className="glass-card"
-                  style={{ padding: "1.5rem", cursor: "pointer" }}
+                  style={{
+                    padding: "1.75rem",
+                    cursor: "pointer",
+                    background: "#ffffff",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                   onClick={() => void handleSessionClick(session)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") void handleSessionClick(session); }}
                   tabIndex={0}
                   role="button"
                   aria-label={`View details for ${session.title}`}
                 >
-                  {session.isFeatured && (
-                    <div className="badge badge-warning" style={{ marginBottom: "0.75rem" }}>⭐ Featured</div>
-                  )}
-                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
                     <span
                       style={{
-                        padding: "0.2rem 0.6rem",
+                        padding: "0.2rem 0.65rem",
                         borderRadius: "var(--radius-full)",
                         fontSize: "0.75rem",
                         fontWeight: 700,
-                        background: `${color}20`,
+                        background: `${color}12`,
                         color,
-                        border: `1px solid ${color}40`,
+                        border: `1px solid ${color}30`,
                       }}
                     >
                       {session.category}
                     </span>
+                    {session.isFeatured && (
+                      <span className="badge badge-warning" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                        <Star size={11} fill="currentColor" /> Featured
+                      </span>
+                    )}
                   </div>
-                  <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.4rem", color: "var(--color-text-primary)" }}>
+
+                  <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "0.4rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}>
                     {session.title}
                   </h2>
-                  <p style={{ color: "var(--color-primary-light)", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem" }}>
-                    👤 {session.speaker}
+
+                  <p style={{ color: "var(--color-primary)", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <User size={14} /> {session.speaker}
                   </p>
-                  <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginBottom: "1rem", lineHeight: 1.5 }}>
-                    {session.description.slice(0, 80)}...
+
+                  <p style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginBottom: "1.25rem", lineHeight: 1.6, flex: 1 }}>
+                    {session.description.slice(0, 95)}...
                   </p>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
-                    <span>📍 {session.zone}</span>
-                    <span>🕐 {formatTime(session.start_time)}</span>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--color-text-muted)", marginBottom: "0.75rem" }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                      <MapPin size={13} /> {session.zone}
+                    </span>
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                      <Clock size={13} /> {formatTime(session.start_time)}
+                    </span>
                   </div>
-                  {/* Capacity bar */}
-                  <div style={{ marginTop: "0.75rem" }}>
-                    <div style={{ height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "2px", overflow: "hidden" }} role="progressbar" aria-valuenow={fillPct} aria-valuemin={0} aria-valuemax={100} aria-label={`${fillPct}% full`}>
+
+                  {/* Capacity Meter */}
+                  <div>
+                    <div style={{ height: "5px", background: "var(--color-bg-3)", borderRadius: "3px", overflow: "hidden" }} role="progressbar" aria-valuenow={fillPct} aria-valuemin={0} aria-valuemax={100} aria-label={`${fillPct}% capacity`}>
                       <div
                         style={{
                           height: "100%",
                           width: `${fillPct}%`,
                           background: fillPct > 90 ? "var(--color-danger)" : fillPct > 70 ? "var(--color-warning)" : "var(--color-success)",
-                          borderRadius: "2px",
+                          borderRadius: "3px",
                         }}
                       />
                     </div>
-                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.25rem" }}>
-                      {session.registered}/{session.capacity} registered ({fillPct}%)
+                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.35rem", display: "flex", justifyContent: "space-between" }}>
+                      <span>{session.registered} registered</span>
+                      <span>{fillPct}% full</span>
                     </div>
                   </div>
                 </article>
@@ -221,7 +281,8 @@ export default function SessionsPage() {
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(0,0,0,0.8)",
+              background: "rgba(15, 23, 42, 0.6)",
+              backdropFilter: "blur(4px)",
               zIndex: 200,
               display: "flex",
               alignItems: "center",
@@ -234,85 +295,105 @@ export default function SessionsPage() {
             onClick={(e) => { if (e.target === e.currentTarget) setSelectedSession(null); }}
           >
             <div
-              className="glass-card"
-              style={{ maxWidth: "600px", width: "100%", padding: "2rem", maxHeight: "80vh", overflowY: "auto" }}
+              className="glass-card fade-in-up"
+              style={{
+                maxWidth: "600px",
+                width: "100%",
+                padding: "2.25rem",
+                maxHeight: "85vh",
+                overflowY: "auto",
+                background: "#ffffff",
+                boxShadow: "var(--shadow-lg)",
+              }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-                <h2 id="session-modal-title" style={{ fontSize: "1.25rem", fontWeight: 700, flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+                <h2 id="session-modal-title" style={{ fontSize: "1.35rem", fontWeight: 800, flex: 1, paddingRight: "1rem" }}>
                   {selectedSession.title}
                 </h2>
-                <button onClick={() => setSelectedSession(null)} className="btn btn-ghost btn-sm" aria-label="Close session details">✕</button>
+                <button
+                  onClick={() => setSelectedSession(null)}
+                  className="btn btn-ghost btn-sm"
+                  style={{ borderRadius: "50%", width: "32px", height: "32px", padding: 0 }}
+                  aria-label="Close session details"
+                >
+                  <X size={16} />
+                </button>
               </div>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.25rem" }}>
                 <span className="badge badge-primary">{selectedSession.category}</span>
-                <span className="badge badge-info">📍 {selectedSession.zone}</span>
-                <span className="badge badge-success">🕐 {formatTime(selectedSession.start_time)}</span>
+                <span className="badge badge-info" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <MapPin size={12} /> {selectedSession.zone}
+                </span>
+                <span className="badge badge-success" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <Clock size={12} /> {formatTime(selectedSession.start_time)}
+                </span>
               </div>
 
-              <p style={{ color: "var(--color-primary-light)", fontWeight: 600, marginBottom: "0.5rem" }}>
-                👤 {selectedSession.speaker}
+              <p style={{ color: "var(--color-primary)", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <User size={16} /> {selectedSession.speaker}
               </p>
-              <p style={{ color: "var(--color-text-secondary)", marginBottom: "1.5rem", lineHeight: 1.7 }}>
+              <p style={{ color: "var(--color-text-secondary)", marginBottom: "1.5rem", lineHeight: 1.7, fontSize: "0.925rem" }}>
                 {selectedSession.description}
               </p>
 
-              {/* Gemini Summary */}
+              {/* Gemini AI Summary Card */}
               <div
                 style={{
-                  padding: "1.25rem",
-                  borderRadius: "var(--radius-md)",
-                  background:
-                    "linear-gradient(135deg,rgba(66,133,244,0.1),rgba(52,168,83,0.1),rgba(251,188,5,0.1),rgba(234,67,53,0.1))",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  marginBottom: "1rem",
+                  padding: "1.35rem",
+                  borderRadius: "var(--radius-lg)",
+                  background: "rgba(79, 70, 229, 0.04)",
+                  border: "1px solid rgba(79, 70, 229, 0.15)",
+                  marginBottom: "1.5rem",
                 }}
                 aria-live="polite"
-                aria-label="Gemini AI session summary"
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                  <span className="badge badge-gemini">✦ Powered by Google Gemini</span>
+                  <span className="badge badge-gemini" style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                    <Sparkles size={12} /> Google Gemini Summary
+                  </span>
                 </div>
                 {summaryLoading ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.5rem 0" }}>
                     <div className="spinner" role="status" aria-label="Loading Gemini summary" />
                     <span style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
-                      Generating AI summary...
+                      Generating intelligent session takeaways...
                     </span>
                   </div>
                 ) : summary ? (
                   <div>
-                    <p style={{ color: "var(--color-text-secondary)", marginBottom: "1rem", lineHeight: 1.7 }}>
+                    <p style={{ color: "var(--color-text-primary)", marginBottom: "1rem", lineHeight: 1.65, fontSize: "0.9rem" }}>
                       {summary.summary}
                     </p>
                     <div style={{ marginBottom: "0.75rem" }}>
-                      <strong style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      <strong style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                         Key Takeaways
                       </strong>
-                      <ul style={{ marginTop: "0.5rem", paddingLeft: "1.25rem" }}>
+                      <ul style={{ marginTop: "0.4rem", paddingLeft: "1.25rem" }}>
                         {summary.keyTakeaways.map((t, i) => (
-                          <li key={i} style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", marginBottom: "0.3rem" }}>{t}</li>
+                          <li key={i} style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+                            {t}
+                          </li>
                         ))}
                       </ul>
                     </div>
-                    <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
-                      🎯 Best for: {summary.targetAudience}
+                    <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                      <Target size={14} color="var(--color-primary)" /> Ideal for: {summary.targetAudience}
                     </div>
                   </div>
                 ) : (
-                  <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>Summary unavailable</p>
+                  <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Summary unavailable at this moment</p>
                 )}
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem" }}>
-                <a
-                  href={`tel:+91-9876-543210`}
-                  className="btn btn-ghost btn-sm"
-                  aria-label="Contact event security"
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <button
+                  onClick={() => setSelectedSession(null)}
+                  className="btn btn-primary"
                 >
-                  🛡️ Need Help? Call Security
-                </a>
+                  Done
+                </button>
               </div>
             </div>
           </div>

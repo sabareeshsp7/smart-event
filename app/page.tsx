@@ -1,6 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ROUTES, EMERGENCY_CONTACTS } from "@/lib/constants";
+import {
+  MapPin,
+  Calendar,
+  Sparkles,
+  Users,
+  ShieldAlert,
+  Accessibility,
+  Bell,
+  LayoutDashboard,
+  UserCheck,
+  HeartPulse,
+  Shield,
+  Flame,
+  PhoneCall,
+  Bot,
+  ArrowRight,
+} from "lucide-react";
+import { ROUTES, EMERGENCY_CONTACTS, VENUE_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "EventIQ — Smart Event Experience Platform",
@@ -10,193 +27,184 @@ export const metadata: Metadata = {
 
 const FEATURES = [
   {
-    icon: "🗺️",
+    icon: MapPin,
     title: "Interactive Navigation",
-    desc: "Locate stages, booths, food courts, restrooms, and help desks with our interactive venue map.",
+    desc: "Locate stages, booths, food courts, restrooms, and help desks with our interactive BIEC venue map.",
     href: ROUTES.NAVIGATION,
-    color: "#8b5cf6",
+    color: "#4f46e5",
   },
   {
-    icon: "📅",
+    icon: Calendar,
     title: "Session Discovery",
-    desc: "Browse the full schedule, search sessions, and add them to your personal agenda.",
+    desc: "Browse the full summit schedule, filter by technical track, and build your personalized agenda.",
     href: ROUTES.SESSIONS,
-    color: "#06b6d4",
+    color: "#0891b2",
   },
   {
-    icon: "🤖",
+    icon: Sparkles,
     title: "AI Recommendations",
-    desc: "Get personalized session suggestions powered by Azure OpenAI based on your interests.",
+    desc: "Receive customized session matching powered by Azure OpenAI and Gemini based on your interests.",
     href: ROUTES.RECOMMENDATIONS,
-    color: "#f59e0b",
+    color: "#d97706",
   },
   {
-    icon: "👥",
+    icon: Users,
     title: "Crowd Heatmap",
-    desc: "See real-time crowd levels, find less crowded zones, and get alternate route suggestions.",
+    desc: "Monitor real-time zone congestion, find uncrowded lounges, and take automated alternate routes.",
     href: ROUTES.CROWD,
-    color: "#10b981",
+    color: "#059669",
   },
   {
-    icon: "🚨",
-    title: "Emergency SOS",
-    desc: "Quick access to emergency contacts (112, 108, 100), first aid locations, and security.",
+    icon: UserCheck,
+    title: "Digital Accreditation",
+    desc: "Register credentials, save profile details to the database, and generate instant printable passes.",
+    href: ROUTES.REGISTER,
+    color: "#2563eb",
+  },
+  {
+    icon: ShieldAlert,
+    title: "Emergency Protocols",
+    desc: "1-click access to emergency services (112, 108, 100), medical stations, and security dispatch.",
     href: ROUTES.EMERGENCY,
-    color: "#ef4444",
+    color: "#dc2626",
   },
   {
-    icon: "♿",
-    title: "Accessibility",
-    desc: "Accessible routes, wheelchair zones, quiet areas, and support for all attendees.",
+    icon: Accessibility,
+    title: "Universal Accessibility",
+    desc: "Step-free wheelchair routes, tactile paths, quiet break areas, and assistive voice technologies.",
     href: ROUTES.ACCESSIBILITY,
-    color: "#3b82f6",
+    color: "#4f46e5",
   },
   {
-    icon: "📢",
+    icon: Bell,
     title: "Real-Time Updates",
-    desc: "Live announcements, schedule changes, and important alerts delivered instantly.",
+    desc: "Live announcements, room changes, and safety advisories delivered directly to your device.",
     href: ROUTES.UPDATES,
-    color: "#ec4899",
+    color: "#0891b2",
   },
   {
-    icon: "⚡",
-    title: "Organizer Dashboard",
-    desc: "Manage sessions, publish alerts, and monitor crowd levels from one command center.",
+    icon: LayoutDashboard,
+    title: "Organizer Command",
+    desc: "Oversee zone occupancy thresholds, publish emergency alerts, and view system diagnostics.",
     href: ROUTES.DASHBOARD,
-    color: "#8b5cf6",
+    color: "#3730a3",
   },
 ] as const;
 
-/** Landing page — hero, features, emergency contacts. */
+/** Landing page — light mode hero, features, and emergency strip with zero emojis. */
 export default function HomePage() {
+  const getContactIcon = (number: string) => {
+    if (number === "112") return <ShieldAlert size={15} />;
+    if (number === "108") return <HeartPulse size={15} />;
+    if (number === "100") return <Shield size={15} />;
+    if (number === "101") return <Flame size={15} />;
+    return <PhoneCall size={15} />;
+  };
+
   return (
     <div className="page-wrapper">
       {/* ── Hero Section ── */}
       <section
         aria-labelledby="hero-heading"
         style={{
-          minHeight: "90vh",
+          minHeight: "85vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           textAlign: "center",
-          padding: "4rem 1.5rem",
+          padding: "4rem 1.5rem 3rem",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Background orbs */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            top: "20%",
-            left: "15%",
-            width: "400px",
-            height: "400px",
-            background: "radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)",
-            borderRadius: "50%",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            bottom: "20%",
-            right: "15%",
-            width: "350px",
-            height: "350px",
-            background: "radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)",
-            borderRadius: "50%",
-            pointerEvents: "none",
-          }}
-        />
-
-        <div style={{ position: "relative", maxWidth: "800px" }} className="fade-in-up">
-          {/* Gemini Badge — hero */}
+        <div style={{ position: "relative", maxWidth: "850px" }} className="fade-in-up">
+          {/* AI Badge */}
           <div
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "0.5rem",
-              padding: "0.5rem 1.25rem",
+              padding: "0.4rem 1.15rem",
               borderRadius: "var(--radius-full)",
-              background:
-                "linear-gradient(135deg,rgba(66,133,244,0.2),rgba(52,168,83,0.2),rgba(251,188,5,0.2),rgba(234,67,53,0.2))",
-              border: "1px solid rgba(255,255,255,0.15)",
+              background: "rgba(79, 70, 229, 0.08)",
+              border: "1px solid rgba(79, 70, 229, 0.22)",
               fontSize: "0.85rem",
               fontWeight: 700,
-              color: "white",
+              color: "var(--color-primary)",
               marginBottom: "1.5rem",
             }}
-            aria-label="Powered by Google Gemini AI"
+            aria-label="Powered by Google Gemini AI and Azure OpenAI"
           >
-            <span aria-hidden="true">✦</span>
-            Powered by Google Gemini AI
+            <Sparkles size={16} />
+            Powered by Google Gemini &amp; Azure OpenAI
           </div>
 
           <h1
             id="hero-heading"
             style={{
-              fontSize: "clamp(2.5rem, 7vw, 5rem)",
+              fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
               fontWeight: 900,
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               marginBottom: "1.5rem",
               letterSpacing: "-0.03em",
+              color: "var(--color-text-primary)",
             }}
           >
-            Your{" "}
-            <span className="gradient-text">Smarter Event</span>
-            <br />
-            Experience Starts Here
+            Smart Venue Navigation &amp; <span className="gradient-text">Event Intelligence</span>
           </h1>
 
           <p
             style={{
-              fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+              fontSize: "clamp(1rem, 2.2vw, 1.25rem)",
               color: "var(--color-text-secondary)",
               marginBottom: "2.5rem",
               lineHeight: 1.7,
+              maxWidth: "700px",
+              margin: "0 auto 2.5rem",
             }}
           >
-            Navigate venues, discover sessions, check crowd levels, get AI-powered
-            recommendations, and stay safe — all in one platform.
+            Navigate {VENUE_NAME}, explore sessions, monitor live crowd density, and interact with the AI event concierge.
           </p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href={ROUTES.SESSIONS} className="btn btn-primary btn-lg" id="cta-sessions">
-              📅 Explore Sessions
+              <Calendar size={18} /> Explore Sessions
+            </Link>
+            <Link href={ROUTES.REGISTER} className="btn btn-ghost btn-lg" id="cta-register">
+              <UserCheck size={18} /> Register &amp; Get Badge
             </Link>
             <Link href={ROUTES.NAVIGATION} className="btn btn-ghost btn-lg" id="cta-map">
-              🗺️ View Venue Map
+              <MapPin size={18} /> Venue Map
             </Link>
-            <Link href={ROUTES.EMERGENCY} className="btn btn-lg" id="cta-emergency"
+            <Link
+              href={ROUTES.EMERGENCY}
+              className="btn btn-lg"
+              id="cta-emergency"
               style={{
-                background: "rgba(239,68,68,0.15)",
-                border: "1px solid rgba(239,68,68,0.4)",
-                color: "#f87171",
+                background: "rgba(220, 38, 38, 0.08)",
+                border: "1px solid rgba(220, 38, 38, 0.25)",
+                color: "var(--color-danger)",
               }}
             >
-              🚨 Emergency: 112
+              <ShieldAlert size={18} /> Emergency: 112
             </Link>
           </div>
 
-          {/* Live stats */}
+          {/* Live summit stats */}
           <div
             style={{
               display: "flex",
-              gap: "2rem",
+              gap: "2.5rem",
               justifyContent: "center",
-              marginTop: "3rem",
+              marginTop: "3.5rem",
               flexWrap: "wrap",
             }}
           >
             {[
-              { value: "15+", label: "Sessions" },
-              { value: "20", label: "Venue Zones" },
-              { value: "AI", label: "Powered Recs" },
-              { value: "24/7", label: "Safety Support" },
+              { value: "15+", label: "Keynotes & Workshops" },
+              { value: "20", label: "BIEC Venue Zones" },
+              { value: "1,400+", label: "Registered Delegates" },
+              { value: "24/7", label: "Live Safety Protocol" },
             ].map((stat) => (
               <div key={stat.label} style={{ textAlign: "center" }}>
                 <div
@@ -212,7 +220,7 @@ export default function HomePage() {
                 >
                   {stat.value}
                 </div>
-                <div style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginTop: "0.25rem" }}>
+                <div style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginTop: "0.25rem", fontWeight: 500 }}>
                   {stat.label}
                 </div>
               </div>
@@ -221,14 +229,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Emergency Alert Strip ── */}
+      {/* ── Emergency Strip ── */}
       <section
         role="region"
         aria-label="Emergency contacts"
         style={{
-          background: "rgba(239,68,68,0.08)",
-          borderTop: "1px solid rgba(239,68,68,0.2)",
-          borderBottom: "1px solid rgba(239,68,68,0.2)",
+          background: "rgba(220, 38, 38, 0.05)",
+          borderTop: "1px solid rgba(220, 38, 38, 0.15)",
+          borderBottom: "1px solid rgba(220, 38, 38, 0.15)",
           padding: "1rem 0",
         }}
       >
@@ -242,123 +250,176 @@ export default function HomePage() {
             justifyContent: "center",
           }}
         >
-          <span style={{ color: "#f87171", fontWeight: 700, fontSize: "0.85rem" }}>
-            🚨 EMERGENCY CONTACTS:
+          <span style={{ color: "var(--color-danger)", fontWeight: 700, fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <ShieldAlert size={16} /> EMERGENCY ASSISTANCE:
           </span>
           {EMERGENCY_CONTACTS.slice(0, 4).map((c) => (
             <a
               key={c.number}
               href={`tel:${c.number}`}
               style={{
-                color: "#f87171",
-                fontWeight: 700,
-                fontSize: "0.875rem",
+                color: "var(--color-danger)",
+                fontWeight: 600,
+                fontSize: "0.85rem",
                 textDecoration: "none",
-                padding: "0.25rem 0.75rem",
+                padding: "0.3rem 0.85rem",
                 borderRadius: "var(--radius-full)",
-                border: "1px solid rgba(239,68,68,0.3)",
-                background: "rgba(239,68,68,0.1)",
+                border: "1px solid rgba(220, 38, 38, 0.25)",
+                background: "#ffffff",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
               }}
               aria-label={`${c.label}: ${c.number}`}
             >
-              {c.icon} {c.label}: <strong>{c.number}</strong>
+              {getContactIcon(c.number)}
+              {c.label}: <strong>{c.number}</strong>
             </a>
           ))}
         </div>
       </section>
 
       {/* ── Features Grid ── */}
-      <section
-        aria-labelledby="features-heading"
-        style={{ padding: "5rem 0" }}
-      >
+      <section aria-labelledby="features-heading" style={{ padding: "5rem 0" }}>
         <div className="container">
-          <h2 id="features-heading" className="section-title" style={{ textAlign: "center" }}>
-            Everything You Need at <span className="gradient-text">One Event</span>
-          </h2>
-          <p className="section-subtitle" style={{ textAlign: "center" }}>
-            8 powerful features to make your event experience extraordinary
-          </p>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <h2 id="features-heading" className="section-title">
+              Complete Event Navigation &amp; <span className="gradient-text">Operations Platform</span>
+            </h2>
+            <p className="section-subtitle">
+              Comprehensive multimodal tools built for attendees, speakers, and event coordinators
+            </p>
+          </div>
 
-          <div className="grid-4">
-            {FEATURES.map((f) => (
-              <Link
-                key={f.href}
-                href={f.href}
-                style={{ textDecoration: "none" }}
-                id={`feature-${f.title.toLowerCase().replace(/\s+/g, "-")}`}
-              >
-                <article
-                  className="glass-card"
-                  style={{ padding: "1.75rem", height: "100%" }}
+          <div className="grid-3" style={{ gap: "1.5rem" }}>
+            {FEATURES.map((f) => {
+              const Icon = f.icon;
+              return (
+                <Link
+                  key={f.href}
+                  href={f.href}
+                  style={{ textDecoration: "none" }}
+                  id={`feature-${f.title.toLowerCase().replace(/\s+/g, "-")}`}
                 >
-                  <div
+                  <article
+                    className="glass-card"
                     style={{
-                      width: "3rem",
-                      height: "3rem",
-                      borderRadius: "var(--radius-md)",
-                      background: `${f.color}20`,
-                      border: `1px solid ${f.color}40`,
+                      padding: "1.75rem",
+                      height: "100%",
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "1.4rem",
-                      marginBottom: "1rem",
+                      flexDirection: "column",
+                      background: "#ffffff",
                     }}
-                    aria-hidden="true"
                   >
-                    {f.icon}
-                  </div>
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "var(--color-text-primary)" }}>
-                    {f.title}
-                  </h3>
-                  <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", lineHeight: 1.6 }}>
-                    {f.desc}
-                  </p>
-                </article>
-              </Link>
-            ))}
+                    <div
+                      style={{
+                        width: "3rem",
+                        height: "3rem",
+                        borderRadius: "var(--radius-md)",
+                        background: `${f.color}15`,
+                        border: `1px solid ${f.color}30`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: f.color,
+                        marginBottom: "1.25rem",
+                      }}
+                      aria-hidden="true"
+                    >
+                      <Icon size={22} />
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: 700,
+                        marginBottom: "0.5rem",
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      {f.title}
+                    </h3>
+                    <p
+                      style={{
+                        color: "var(--color-text-secondary)",
+                        fontSize: "0.875rem",
+                        lineHeight: 1.6,
+                        flex: 1,
+                      }}
+                    >
+                      {f.desc}
+                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
+                        color: f.color,
+                        marginTop: "1.25rem",
+                      }}
+                    >
+                      Open {f.title} <ArrowRight size={14} />
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── Google AI Section ── */}
+      {/* ── AI Technology Section ── */}
       <section
         aria-labelledby="ai-section-heading"
         style={{
-          padding: "4rem 0",
-          background: "var(--color-bg-2)",
+          padding: "4.5rem 0",
+          background: "#ffffff",
           borderTop: "1px solid var(--color-border)",
           borderBottom: "1px solid var(--color-border)",
         }}
       >
         <div className="container" style={{ textAlign: "center" }}>
           <h2 id="ai-section-heading" className="section-title">
-            Powered by{" "}
-            <span className="gradient-text-gemini">Google AI</span>
+            Powered by <span className="gradient-text">World-Class AI</span>
           </h2>
           <p className="section-subtitle">
-            World-class AI technology working behind the scenes for you
+            Multimodal intelligence orchestrating voice, crowd risk analysis, and streaming responses
           </p>
 
-          <div className="grid-2" style={{ maxWidth: "700px", margin: "0 auto" }}>
+          <div className="grid-2" style={{ maxWidth: "800px", margin: "0 auto", gap: "1.5rem" }}>
             <div
               className="glass-card"
               style={{
                 padding: "2rem",
-                textAlign: "center",
-                borderColor: "rgba(66,133,244,0.3)",
+                textAlign: "left",
+                background: "var(--color-bg)",
+                border: "1px solid var(--color-border)",
               }}
             >
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }} aria-hidden="true">✦</div>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.5rem" }} className="gradient-text-gemini">
+              <div
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "var(--radius-md)",
+                  background: "rgba(79, 70, 229, 0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--color-primary)",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Bot size={22} />
+              </div>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>
                 Google Gemini
               </h3>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
-                Session summaries &amp; crowd risk assessment using Gemini 1.5 Flash
+              <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", lineHeight: 1.6 }}>
+                Session summarization, semantic agenda tagging, and crowd risk assessment scoring.
               </p>
-              <div className="badge badge-gemini" style={{ marginTop: "1rem" }}>
-                Powered by Google Gemini
+              <div className="badge badge-primary" style={{ marginTop: "1rem" }}>
+                Gemini 1.5 Flash
               </div>
             </div>
 
@@ -366,19 +427,34 @@ export default function HomePage() {
               className="glass-card"
               style={{
                 padding: "2rem",
-                textAlign: "center",
-                borderColor: "rgba(139,92,246,0.3)",
+                textAlign: "left",
+                background: "var(--color-bg)",
+                border: "1px solid var(--color-border)",
               }}
             >
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }} aria-hidden="true">⚡</div>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.5rem" }} className="gradient-text">
+              <div
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "var(--radius-md)",
+                  background: "rgba(8, 145, 178, 0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--color-secondary)",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Sparkles size={22} />
+              </div>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>
                 Azure OpenAI
               </h3>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
-                Streaming AI chat assistant &amp; personalized session recommendations
+              <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", lineHeight: 1.6 }}>
+                High-speed streaming event concierge, question answering, and schedule guidance.
               </p>
-              <div className="badge badge-primary" style={{ marginTop: "1rem" }}>
-                GPT-4o Powered
+              <div className="badge badge-info" style={{ marginTop: "1rem" }}>
+                GPT-4o / GPT-5.4 Architecture
               </div>
             </div>
           </div>

@@ -11,12 +11,12 @@ export const APP_VERSION = "1.0.0" as const;
 
 // ─── Emergency contacts ───────────────────────────────────────────────────────
 export const EMERGENCY_CONTACTS = [
-  { label: "Emergency Services", number: "112", icon: "🚨" },
-  { label: "Medical / Ambulance", number: "108", icon: "🏥" },
-  { label: "Police", number: "100", icon: "👮" },
-  { label: "Fire Brigade", number: "101", icon: "🔥" },
-  { label: "Event Security", number: "+91-9876-543210", icon: "🛡️" },
-  { label: "First Aid Desk", number: "+91-9876-543211", icon: "💊" },
+  { label: "Emergency Services", number: "112", icon: "" },
+  { label: "Medical / Ambulance", number: "108", icon: "" },
+  { label: "Police", number: "100", icon: "" },
+  { label: "Fire Brigade", number: "101", icon: "" },
+  { label: "Event Security", number: "+91-9876-543210", icon: "" },
+  { label: "First Aid Desk", number: "+91-9876-543211", icon: "" },
 ] as const;
 
 // ─── AI model names ──────────────────────────────────────────────────────────
@@ -42,6 +42,10 @@ export const CROWD_HIGH_THRESHOLD = 90 as const;
 export const DEFAULT_PAGE_SIZE = 12 as const;
 export const MAX_PAGE_SIZE = 50 as const;
 
+// ─── Venue Metadata ──────────────────────────────────────────────────────────
+export const VENUE_NAME = "Bangalore International Exhibition Centre (BIEC)" as const;
+export const VENUE_ADDRESS = "10th Mile, Tumkur Road, Madavara Post, Bengaluru, Karnataka 562123" as const;
+
 // ─── Navigation routes ───────────────────────────────────────────────────────
 export const ROUTES = {
   HOME: "/",
@@ -54,6 +58,7 @@ export const ROUTES = {
   UPDATES: "/updates",
   DASHBOARD: "/dashboard",
   CHAT: "/chat",
+  REGISTER: "/register",
 } as const;
 
 // ─── Venue zones ─────────────────────────────────────────────────────────────

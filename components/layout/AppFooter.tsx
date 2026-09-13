@@ -1,44 +1,77 @@
 /**
- * App Footer — emergency contacts, quick links, Google Gemini badge.
- * RULE PA-2: Emergency numbers (112, 1078) must appear on ≥3 pages prominently.
- * RULE GS-7: Add "Google AI" to site footer as a featured technology.
+ * App Footer — emergency contacts, quick links, and technology attribution.
+ * Clean light mode aesthetic with Lucide icons and zero emojis.
+ * Complies with RULE GS-7 ("Google AI" featured technology) and RULE PA-2.
  */
 
 import Link from "next/link";
+import {
+  Sparkles,
+  ShieldAlert,
+  PhoneCall,
+  Bot,
+  HeartPulse,
+  Flame,
+  Shield,
+} from "lucide-react";
 import { EMERGENCY_CONTACTS, ROUTES, APP_NAME, APP_VERSION } from "@/lib/constants";
 
-/** App footer with emergency contacts and tech attribution. */
+/** App footer with emergency contacts and tech attribution in Light Mode. */
 export function AppFooter() {
+  const getContactIcon = (number: string) => {
+    if (number === "112") return <ShieldAlert size={15} color="var(--color-danger)" />;
+    if (number === "108") return <HeartPulse size={15} color="var(--color-danger)" />;
+    if (number === "100") return <Shield size={15} color="var(--color-danger)" />;
+    if (number === "101") return <Flame size={15} color="var(--color-danger)" />;
+    return <PhoneCall size={15} color="var(--color-danger)" />;
+  };
+
   return (
     <footer
       role="contentinfo"
       style={{
-        background: "var(--color-bg-2)",
+        background: "#ffffff",
         borderTop: "1px solid var(--color-border)",
-        padding: "3rem 0 1.5rem",
+        padding: "3.5rem 0 2rem",
         marginTop: "auto",
+        boxShadow: "0 -2px 10px rgba(0,0,0,0.02)",
       }}
     >
       <div className="container">
-        <div className="grid-4" style={{ marginBottom: "2rem" }}>
-          {/* Brand */}
+        <div className="grid-4" style={{ marginBottom: "2.5rem" }}>
+          {/* Brand Column */}
           <div>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "1.25rem",
-                fontWeight: 800,
-                background: "var(--gradient-primary)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                marginBottom: "0.75rem",
-              }}
-            >
-              ⚡ {APP_NAME}
-            </h2>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", lineHeight: 1.6 }}>
-              Smart Event Experience Platform. Navigate, discover, and stay safe at any event.
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+              <div
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--gradient-primary)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                }}
+              >
+                <Sparkles size={16} />
+              </div>
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "1.25rem",
+                  fontWeight: 800,
+                  background: "var(--gradient-primary)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {APP_NAME}
+              </h2>
+            </div>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", lineHeight: 1.6 }}>
+              Smart Event Experience Platform. Real-time navigation, crowd heatmaps, attendee registration, and AI concierge.
             </p>
           </div>
 
@@ -49,19 +82,20 @@ export function AppFooter() {
                 fontSize: "0.8rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.1em",
+                letterSpacing: "0.08em",
                 color: "var(--color-text-muted)",
-                marginBottom: "0.75rem",
+                marginBottom: "0.85rem",
               }}
             >
-              Quick Links
+              Navigation
             </h3>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {[
-                { href: ROUTES.SESSIONS, label: "Sessions" },
-                { href: ROUTES.NAVIGATION, label: "Venue Map" },
-                { href: ROUTES.CROWD, label: "Crowd Levels" },
-                { href: ROUTES.ACCESSIBILITY, label: "Accessibility" },
+                { href: ROUTES.SESSIONS, label: "Session Schedule" },
+                { href: ROUTES.NAVIGATION, label: "Interactive Venue Map" },
+                { href: ROUTES.CROWD, label: "Zone Crowd Levels" },
+                { href: ROUTES.REGISTER, label: "Attendee Registration" },
+                { href: ROUTES.ACCESSIBILITY, label: "Accessibility Services" },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link
@@ -70,7 +104,7 @@ export function AppFooter() {
                       color: "var(--color-text-secondary)",
                       textDecoration: "none",
                       fontSize: "0.875rem",
-                      transition: "color 0.15s",
+                      transition: "color 0.15s ease",
                     }}
                   >
                     {label}
@@ -87,14 +121,17 @@ export function AppFooter() {
                 fontSize: "0.8rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.1em",
+                letterSpacing: "0.08em",
                 color: "var(--color-text-muted)",
-                marginBottom: "0.75rem",
+                marginBottom: "0.85rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
               }}
             >
-              🚨 Emergency Contacts
+              <ShieldAlert size={14} color="var(--color-danger)" /> Emergency Contacts
             </h3>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.45rem" }}>
               {EMERGENCY_CONTACTS.slice(0, 4).map((contact) => (
                 <li key={contact.number}>
                   <a
@@ -103,14 +140,14 @@ export function AppFooter() {
                       display: "flex",
                       alignItems: "center",
                       gap: "0.5rem",
-                      color: "#f87171",
+                      color: "var(--color-danger)",
                       textDecoration: "none",
                       fontSize: "0.875rem",
                       fontWeight: 600,
                     }}
                     aria-label={`Call ${contact.label}: ${contact.number}`}
                   >
-                    <span aria-hidden="true">{contact.icon}</span>
+                    {getContactIcon(contact.number)}
                     {contact.label}: <strong>{contact.number}</strong>
                   </a>
                 </li>
@@ -125,46 +162,45 @@ export function AppFooter() {
                 fontSize: "0.8rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.1em",
+                letterSpacing: "0.08em",
                 color: "var(--color-text-muted)",
-                marginBottom: "0.75rem",
+                marginBottom: "0.85rem",
               }}
             >
-              Powered By
+              AI Orchestration
             </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
               <div
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  padding: "0.375rem 0.75rem",
+                  padding: "0.4rem 0.85rem",
                   borderRadius: "var(--radius-md)",
-                  background: "linear-gradient(135deg,rgba(66,133,244,0.15),rgba(52,168,83,0.15),rgba(251,188,5,0.15),rgba(234,67,53,0.15))",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "rgba(79, 70, 229, 0.08)",
+                  border: "1px solid rgba(79, 70, 229, 0.2)",
                   fontSize: "0.8rem",
                   fontWeight: 700,
-                  color: "white",
+                  color: "var(--color-primary)",
                 }}
-                aria-label="Powered by Google AI and Google Gemini"
               >
-                <span aria-hidden="true">✦</span> Google Gemini AI
+                <Bot size={15} /> Google Gemini AI
               </div>
               <div
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  padding: "0.375rem 0.75rem",
+                  padding: "0.4rem 0.85rem",
                   borderRadius: "var(--radius-md)",
-                  background: "rgba(139,92,246,0.15)",
-                  border: "1px solid rgba(139,92,246,0.3)",
+                  background: "rgba(8, 145, 178, 0.08)",
+                  border: "1px solid rgba(8, 145, 178, 0.2)",
                   fontSize: "0.8rem",
                   fontWeight: 700,
-                  color: "var(--color-primary-light)",
+                  color: "var(--color-secondary)",
                 }}
               >
-                ⚡ Azure OpenAI
+                <Sparkles size={15} /> Azure OpenAI &amp; Sarvam
               </div>
             </div>
           </div>
@@ -179,14 +215,14 @@ export function AppFooter() {
             alignItems: "center",
             flexWrap: "wrap",
             gap: "1rem",
+            fontSize: "0.8rem",
+            color: "var(--color-text-muted)",
           }}
         >
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>
-            © 2025 {APP_NAME} v{APP_VERSION}. All rights reserved.
-          </p>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>
-            🤖 AI-powered by <strong style={{ color: "white" }}>Google AI</strong> &amp;{" "}
-            <strong style={{ color: "white" }}>Azure OpenAI</strong>
+          <p>© 2025 {APP_NAME} v{APP_VERSION} • Bangalore International Exhibition Centre</p>
+          <p>
+            Powered by <strong style={{ color: "var(--color-text-primary)" }}>Google AI</strong> &amp;{" "}
+            <strong style={{ color: "var(--color-text-primary)" }}>Azure OpenAI</strong>
           </p>
         </div>
       </div>
