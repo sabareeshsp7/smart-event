@@ -25,6 +25,7 @@ import {
 import { ROUTES, APP_NAME } from "@/lib/constants";
 import { PublicAdvisoryBanner } from "@/components/layout/PublicAdvisoryBanner";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
+import { HeaderLiveClock } from "@/components/layout/HeaderLiveClock";
 
 const NAV_LINKS = [
   { href: ROUTES.EVENTS, label: "Live Events", icon: Ticket },
@@ -136,8 +137,12 @@ export function AppHeader() {
             })}
           </nav>
 
+          {/* Real-time Clock & Live Telemetry Sync */}
+          <HeaderLiveClock />
+
           {/* Attendee Profile Button */}
           <button
+
             onClick={() => {
               setInputName(profile.name);
               setInputPhone(profile.phone);
@@ -225,7 +230,11 @@ export function AppHeader() {
             role="dialog"
             aria-label="Mobile navigation"
           >
+            <div style={{ paddingBottom: "0.5rem", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "center" }}>
+              <HeaderLiveClock />
+            </div>
             {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+
               const isActive = pathname === href;
               return (
                 <Link

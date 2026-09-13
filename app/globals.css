@@ -375,3 +375,30 @@ h1, h2, h3, h4, h5, h6 {
   align-items: flex-start;
   gap: 0.75rem;
 }
+
+/* ── Live Beacon Animation ── */
+@keyframes livePulseBeacon {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.live-beacon-dot {
+  animation: livePulseBeacon 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@media (max-width: 900px) {
+  .desktop-only-date {
+    display: none !important;
+  }
+}
+

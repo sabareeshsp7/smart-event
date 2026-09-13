@@ -30,12 +30,44 @@ export function getAzureFallbackResponse(prompt?: string): string {
   const query = (prompt ?? "").toLowerCase().trim();
 
   if (query) {
+    try {
+      // Dynamic live database lookup
+      const { getDb } = require("@/lib/db/connection");
+      const db = getDb();
+
+      if (query.includes("session") || query.includes("keynote") || query.includes("speaker") || query.includes("schedule") || query.includes("hall 1") || query.includes("hall 2") || query.includes("hall 3") || query.includes("hall 4")) {
+        const searchWord = query.split(" ").find((w: string) => w.length > 2) ?? "";
+        const found = db.prepare(
+          "SELECT title, speaker, zone, start_time, category FROM sessions WHERE title LIKE ? OR speaker LIKE ? OR zone LIKE ? LIMIT 1"
+        ).get(`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`) as { title: string; speaker: string; zone: string; start_time: string; category: string } | undefined;
+
+        if (found) {
+          const time = found.start_time.split("T")[1]?.slice(0, 5) ?? found.start_time;
+          return `From the live event database: "${found.title}" presented by ${found.speaker} is scheduled at ${found.zone} at ${time}. Category: ${found.category}.`;
+        }
+      }
+
+      if (query.includes("crowd") || query.includes("busy") || query.includes("occupancy") || query.includes("food") || query.includes("court") || query.includes("density")) {
+        const zoneWord = query.includes("food") ? "Food" : "Hall 1";
+        const foundCrowd = db.prepare(
+          "SELECT zone, occupancy, capacity FROM crowd_zones WHERE zone LIKE ? LIMIT 1"
+        ).get(`%${zoneWord}%`) as { zone: string; occupancy: number; capacity: number } | undefined;
+
+        if (foundCrowd) {
+          const pct = Math.round((foundCrowd.occupancy / foundCrowd.capacity) * 100);
+          return `Live crowd telemetry: ${foundCrowd.zone} currently has ${foundCrowd.occupancy} attendees out of ${foundCrowd.capacity} capacity (${pct}% full). Overall flow is operating safely within campus thresholds.`;
+        }
+      }
+    } catch {
+      // Proceed with static knowledge
+    }
+
     if (query.includes("main stage") || query.includes("where") || query.includes("map") || query.includes("location") || query.includes("direction")) {
-      return "The Main Stage (Grand Alpha Auditorium) is located in Hall 1 on the Ground Level, directly accessible from the Central Entrance Plaza. Proceed past Registration and take the North Concourse corridor on your left.";
+      return "The Main Stage (Hall 1 — Grand Alpha Stage) is located on the Ground Level, directly accessible from the Main Entrance Turnstiles at Gate A. Proceed past Registration and take the North Concourse corridor on your left.";
     }
 
     if (query.includes("session") || query.includes("ai") || query.includes("schedule") || query.includes("keynote")) {
-      return "The featured morning session is 'Opening Keynote: The Future of AI' presented by Dr. Priya Sharma at 09:00 AM on the Main Stage. Next, 'Building with LLMs in Production' by Rahul Mehta begins at 10:00 AM in the Auditorium.";
+      return "The featured keynote is 'Opening Keynote: The Future of AI' presented by Dr. Priya Sharma at 09:00 AM in Hall 1 — Grand Alpha Stage. Next, 'Building with LLMs in Production' by Rahul Mehta begins at 10:00 AM in Hall 2 — Beta Auditorium.";
     }
 
     if (query.includes("food") || query.includes("lunch") || query.includes("eat") || query.includes("court") || query.includes("coffee")) {
@@ -47,7 +79,7 @@ export function getAzureFallbackResponse(prompt?: string): string {
     }
 
     if (query.includes("crowd") || query.includes("busy") || query.includes("traffic") || query.includes("density")) {
-      return "Current venue occupancy overview: Main Stage is at 62% capacity, Innovation Pavilion is at 40%, and Workshop Hub A is at 78%. All zones are operating comfortably within safe capacity thresholds.";
+      return "Current venue occupancy overview: Hall 1 — Grand Alpha Stage is at 62% capacity, Innovation Pavilion is at 40%, and Workshop Hall A is at 78%. All zones are operating comfortably within safe capacity thresholds.";
     }
 
     if (query.includes("access") || query.includes("wheelchair") || query.includes("ramp") || query.includes("elevator")) {

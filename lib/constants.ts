@@ -64,27 +64,38 @@ export const ROUTES = {
 
 // ─── Venue zones ─────────────────────────────────────────────────────────────
 export const VENUE_ZONES = [
+  "Hall 1 — Grand Alpha Stage",
+  "Hall 2 — Beta Auditorium",
+  "Hall 3 — Workshop Hall A",
+  "Hall 4 — Workshop Hall B",
+  "Innovation Hub — Central Atrium",
+  "South Food Concourse",
+  "Networking Plaza & Lounge",
+  "Registration & Medical Desk",
+  "VIP Lounge",
+  "Sponsor Pavilion",
+  "Restrooms (East Wing)",
+  "Restrooms (West Wing)",
+  "First Aid Station",
+  "Attendee Help Desk",
+  "Hardware & Robotics Expo",
+  "Parking Zone (P1 & P2)",
+  "Main Entrance — Gate A Turnstiles",
+  "Side Entrance — Gate B",
+  "Press & Media Room",
+  "Merchandise & Swag Concourse",
+  // Canonical aliases for backward compatibility
   "Main Stage",
   "Workshop Hall A",
   "Workshop Hall B",
   "Innovation Hub",
   "Food Court",
   "Registration",
-  "VIP Lounge",
   "Networking Area",
-  "Restrooms Block A",
-  "Restrooms Block B",
-  "First Aid Station",
-  "Help Desk",
-  "Exhibition Area",
-  "Parking Zone",
-  "Main Entrance",
-  "Side Entrance",
   "Auditorium",
-  "Press Room",
-  "Sponsor Booths",
-  "Merchandise Zone",
 ] as const;
+
+
 
 // ─── Session categories ───────────────────────────────────────────────────────
 export const SESSION_CATEGORIES = [
