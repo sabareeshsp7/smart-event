@@ -68,7 +68,10 @@ export default function RecommendationsPage() {
 
   const formatTime = (iso: string) => {
     try {
-      return new Date(iso).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+      const d = new Date(iso);
+      const date = d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+      const time = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+      return `${date} • ${time} IST`;
     } catch {
       return iso;
     }

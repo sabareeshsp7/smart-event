@@ -224,7 +224,7 @@ export function AppFooter() {
             color: "var(--color-text-muted)",
           }}
         >
-          <p>© 2025 {APP_NAME} v{APP_VERSION} • Bangalore International Exhibition Centre</p>
+          <p>© 2026 {APP_NAME} v{APP_VERSION} • Bangalore International Exhibition Centre</p>
           <p>
             Powered by <strong style={{ color: "var(--color-text-primary)" }}>Google AI</strong> &amp;{" "}
             <strong style={{ color: "var(--color-text-primary)" }}>Azure OpenAI</strong>

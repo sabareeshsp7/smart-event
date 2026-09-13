@@ -13,11 +13,11 @@ export interface ChatMessage {
 }
 
 const GENERAL_FALLBACKS = [
-  "I am your EventIQ Assistant for the Bangalore International Exhibition Centre. I can provide real-time details on session schedules, speaker bios, venue navigation, zone crowd levels, accessibility services, and emergency protocols. How may I assist you today?",
-  "The Main Stage keynote begins at 09:00 AM. You can explore all scheduled workshops and track agendas in the Sessions tab.",
-  "Looking for directions? The venue map provides real-time walking routes to all halls, food concourses, and first aid stations.",
+  "I am your EventIQ Assistant for the India AI & Cloud Compute Summit 2026 at the Bangalore International Exhibition Centre. I can provide real-time details on session schedules, speaker bios, venue navigation, zone crowd levels, accessibility services, and emergency protocols. How may I assist you today?",
+  "The Summit Opening Plenary begins at 09:00 AM IST at Hall 1 — Grand Alpha Stage. You can explore all scheduled workshops and tracks in the Sessions tab.",
+  "Looking for directions? The interactive floor plan provides real-time routes between Grand Alpha Stage (Hall 1), Beta Auditorium (Hall 2), Workshop Halls A & B (Halls 3 & 4), and the Food Concourse.",
   "For emergency services, dial 112 directly or visit the East Medical Wing at Gate 2.",
-  "You can register and receive your fast-track digital event badge at any time through the Registration portal.",
+  "You can review your verified digital event passes and real-time venue telemetry at any time.",
 ];
 
 let fallbackIndex = 0;
@@ -32,18 +32,75 @@ export function getAzureFallbackResponse(prompt?: string): string {
   if (query) {
     try {
       // Dynamic live database lookup
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getDb } = require("@/lib/db/connection");
       const db = getDb();
 
-      if (query.includes("session") || query.includes("keynote") || query.includes("speaker") || query.includes("schedule") || query.includes("hall 1") || query.includes("hall 2") || query.includes("hall 3") || query.includes("hall 4")) {
-        const searchWord = query.split(" ").find((w: string) => w.length > 2) ?? "";
-        const found = db.prepare(
-          "SELECT title, speaker, zone, start_time, category FROM sessions WHERE title LIKE ? OR speaker LIKE ? OR zone LIKE ? LIMIT 1"
-        ).get(`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`) as { title: string; speaker: string; zone: string; start_time: string; category: string } | undefined;
+      // Specific session search or broad schedule request
+      if (
+        query.includes("session") ||
+        query.includes("keynote") ||
+        query.includes("speaker") ||
+        query.includes("schedule") ||
+        query.includes("plenary") ||
+        query.includes("robotics") ||
+        query.includes("llm") ||
+        query.includes("cloud") ||
+        query.includes("ai") ||
+        query.includes("dpi") ||
+        query.includes("payments") ||
+        query.includes("security") ||
+        query.includes("energy") ||
+        query.includes("quantum") ||
+        query.includes("founders") ||
+        query.includes("hall 1") ||
+        query.includes("hall 2") ||
+        query.includes("hall 3") ||
+        query.includes("hall 4")
+      ) {
+        // Specific keyword matching for precision
+        let targetKeyword = "";
+        if (query.includes("robotics") || query.includes("drone")) targetKeyword = "robotics";
+        else if (query.includes("llm") || query.includes("inference")) targetKeyword = "llm";
+        else if (query.includes("dpi") || query.includes("payment")) targetKeyword = "payments";
+        else if (query.includes("security") || query.includes("zero trust")) targetKeyword = "defense";
+        else if (query.includes("energy") || query.includes("ev") || query.includes("vehicle")) targetKeyword = "energy";
+        else if (query.includes("quantum") || query.includes("qkd")) targetKeyword = "quantum";
+        else if (query.includes("founders") || query.includes("demo day") || query.includes("pitch")) targetKeyword = "founders";
+        else if (query.includes("bharat") || query.includes("nilekani") || query.includes("closing")) targetKeyword = "bharat";
+        else if (query.includes("gala") || query.includes("cultural") || query.includes("dinner")) targetKeyword = "gala";
+        else if (query.includes("hall 1")) targetKeyword = "Hall 1";
+        else if (query.includes("hall 2")) targetKeyword = "Hall 2";
+        else if (query.includes("hall 3")) targetKeyword = "Hall 3";
+        else if (query.includes("hall 4")) targetKeyword = "Hall 4";
+        else if (query.includes("priya") || query.includes("plenary")) targetKeyword = "plenary";
 
-        if (found) {
-          const time = found.start_time.split("T")[1]?.slice(0, 5) ?? found.start_time;
-          return `From the live event database: "${found.title}" presented by ${found.speaker} is scheduled at ${found.zone} at ${time}. Category: ${found.category}.`;
+        if (targetKeyword) {
+          const found = db.prepare(
+            "SELECT title, speaker, zone, start_time, end_time, category FROM sessions WHERE title LIKE ? OR speaker LIKE ? OR zone LIKE ? LIMIT 1"
+          ).get(`%${targetKeyword}%`, `%${targetKeyword}%`, `%${targetKeyword}%`) as { title: string; speaker: string; zone: string; start_time: string; end_time: string; category: string } | undefined;
+
+          if (found) {
+            const date = found.start_time.split("T")[0];
+            const startTime = found.start_time.split("T")[1]?.slice(0, 5) ?? found.start_time;
+            const endTime = found.end_time.split("T")[1]?.slice(0, 5) ?? found.end_time;
+            return `From the verified event database: "${found.title}" (${found.category}) presented by ${found.speaker} is scheduled at ${found.zone} on ${date} from ${startTime} to ${endTime} IST.`;
+          }
+        }
+
+        // Broad schedule overview if user asks generally about sessions or AI/cloud tracks
+        const topSessions = db.prepare(
+          "SELECT title, speaker, zone, start_time, end_time FROM sessions ORDER BY start_time ASC LIMIT 4"
+        ).all() as Array<{ title: string; speaker: string; zone: string; start_time: string; end_time: string }>;
+
+        if (topSessions.length > 0) {
+          const items = topSessions
+            .map(
+              (s, i) =>
+                `${i + 1}. "${s.title}" by ${s.speaker} (${s.zone}, ${s.start_time.split("T")[1]?.slice(0, 5)} - ${s.end_time.split("T")[1]?.slice(0, 5)} IST)`
+            )
+            .join("\n");
+          return `Here is the scheduled agenda for the India AI & Cloud Compute Summit 2026 at BIEC:\n${items}\n\nYou can view all 10 tracks with full details in the Sessions tab.`;
         }
       }
 
@@ -55,7 +112,7 @@ export function getAzureFallbackResponse(prompt?: string): string {
 
         if (foundCrowd) {
           const pct = Math.round((foundCrowd.occupancy / foundCrowd.capacity) * 100);
-          return `Live crowd telemetry: ${foundCrowd.zone} currently has ${foundCrowd.occupancy} attendees out of ${foundCrowd.capacity} capacity (${pct}% full). Overall flow is operating safely within campus thresholds.`;
+          return `Live crowd telemetry: ${foundCrowd.zone} currently has ${foundCrowd.occupancy} attendees out of ${foundCrowd.capacity} capacity (${pct}% full). Overall campus movement is running smoothly.`;
         }
       }
     } catch {
@@ -67,7 +124,7 @@ export function getAzureFallbackResponse(prompt?: string): string {
     }
 
     if (query.includes("session") || query.includes("ai") || query.includes("schedule") || query.includes("keynote")) {
-      return "The featured keynote is 'Opening Keynote: The Future of AI' presented by Dr. Priya Sharma at 09:00 AM in Hall 1 — Grand Alpha Stage. Next, 'Building with LLMs in Production' by Rahul Mehta begins at 10:00 AM in Hall 2 — Beta Auditorium.";
+      return "The featured keynote is 'Opening Plenary: India AI & Cloud Compute Summit 2026' presented by Dr. Priya Sharma & Special Delegates at 09:00 AM – 10:15 AM IST in Hall 1 — Grand Alpha Stage. Next, 'Next-Gen Autonomous Robotics & Drone Systems Showcase' begins at 10:30 AM in Hall 3 — Workshop Hall A, followed by 'Building Enterprise LLMs & High-Throughput Inference' by Rahul Mehta at 11:45 AM in Hall 2 — Beta Auditorium.";
     }
 
     if (query.includes("food") || query.includes("lunch") || query.includes("eat") || query.includes("court") || query.includes("coffee")) {
@@ -87,7 +144,7 @@ export function getAzureFallbackResponse(prompt?: string): string {
     }
 
     if (query.includes("register") || query.includes("badge") || query.includes("ticket") || query.includes("pass")) {
-      return "You can register attendee credentials and generate your digital QR pass via the Registration page. Digital passes can be scanned at any check-in terminal for fast-track badge pickup.";
+      return "You can review your verified Ticketmaster digital pass and agenda anytime in the Live Events and Sessions tabs.";
     }
   }
 

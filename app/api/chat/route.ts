@@ -34,10 +34,12 @@ function getLiveDatabaseContext(): string {
     ).all() as Array<{ title: string; message: string; severity: string; zone: string }>;
 
     const sessionList = sessions
-      .map(
-        (s) =>
-          `- "${s.title}" (${s.category}) by ${s.speaker} | Hall: ${s.zone} | Time: ${s.start_time.split("T")[1]?.slice(0, 5) ?? s.start_time} - ${s.end_time.split("T")[1]?.slice(0, 5) ?? s.end_time} | Reg: ${s.registered}/${s.capacity}`
-      )
+      .map((s) => {
+        const date = s.start_time.split("T")[0] || "2026-09-18";
+        const start = s.start_time.split("T")[1]?.slice(0, 5) ?? s.start_time;
+        const end = s.end_time.split("T")[1]?.slice(0, 5) ?? s.end_time;
+        return `- "${s.title}" (${s.category}) by ${s.speaker} | Hall: ${s.zone} | Date: ${date} | Clock Time: ${start} – ${end} IST | Reg: ${s.registered}/${s.capacity}`;
+      })
       .join("\n");
 
     const crowdList = crowd

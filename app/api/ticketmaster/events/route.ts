@@ -54,7 +54,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 2000,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 1 — Grand Alpha Auditorium",
+      hall: "Hall 1 — Grand Alpha Stage",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -80,7 +80,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 800,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 3 — Robotics & Hardware Pavilion",
+      hall: "Hall 3 — Workshop Hall A",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -89,7 +89,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
       latitude: "13.0617",
       longitude: "77.4727",
     },
-    category: "Exhibition",
+    category: "Workshop",
     genre: "Robotics & IoT",
     priceRange: { min: 999, max: 2499, currency: "INR" },
     status: "onsale",
@@ -106,7 +106,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 400,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 2 — Deep Tech Stage A",
+      hall: "Hall 2 — Beta Auditorium",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -132,7 +132,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 350,
     venue: {
       name: VENUE_NAME,
-      hall: "Conference Centre — Plenary Hall A",
+      hall: "Hall 4 — Workshop Hall B",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -158,7 +158,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 300,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 4 — Cybersecurity Arena",
+      hall: "Hall 4 — Workshop Hall B",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -184,7 +184,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 600,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 2 — Cleantech Exhibition Stage",
+      hall: "Hall 2 — Beta Auditorium",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -193,7 +193,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
       latitude: "13.0617",
       longitude: "77.4727",
     },
-    category: "Exhibition",
+    category: "Panel",
     genre: "Cleantech & EV",
     priceRange: { min: 999, max: 2199, currency: "INR" },
     status: "onsale",
@@ -210,7 +210,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 250,
     venue: {
       name: VENUE_NAME,
-      hall: "Conference Centre — Hall B",
+      hall: "Hall 3 — Workshop Hall A",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -258,11 +258,11 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     date: "2026-09-19",
     time: "16:30:00",
     timezone: "Asia/Kolkata",
-    speaker: "Distinguished Government & Tech Leaders",
+    speaker: "Nandan Nilekani & Distinguished Tech Leaders",
     capacity: 2000,
     venue: {
       name: VENUE_NAME,
-      hall: "Hall 1 — Grand Alpha Auditorium",
+      hall: "Hall 1 — Grand Alpha Stage",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -288,7 +288,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
     capacity: 1500,
     venue: {
       name: VENUE_NAME,
-      hall: "Open Promenade & VIP Pavilion",
+      hall: "Networking Plaza & Lounge",
       address: VENUE_ADDRESS,
       city: "Bengaluru",
       state: "Karnataka",
@@ -297,6 +297,7 @@ const BIEC_VENUE_PROGRAMS: NormalizedTicketmasterEvent[] = [
       latitude: "13.0617",
       longitude: "77.4727",
     },
+
     category: "Networking",
     genre: "Cultural & Dinner",
     priceRange: { min: 1199, max: 2999, currency: "INR" },

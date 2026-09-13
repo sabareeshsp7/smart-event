@@ -45,12 +45,38 @@ const CATEGORY_COLORS: Record<string, string> = {
   Awards: "#ea580c",
 };
 
-function formatTime(iso: string): string {
+function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+    const d = new Date(iso);
+    return d.toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   } catch {
-    return iso;
+    return iso.split("T")[0] || iso;
   }
+}
+
+function formatClockTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch {
+    return iso.split("T")[1]?.slice(0, 5) || iso;
+  }
+}
+
+function formatTimeRange(startIso: string, endIso?: string): string {
+  const startStr = formatClockTime(startIso);
+  if (!endIso) return `${startStr} IST`;
+  const endStr = formatClockTime(endIso);
+  return `${startStr} – ${endStr} IST`;
 }
 
 /** Sessions discovery page in Light Mode with zero emojis. */
@@ -60,6 +86,7 @@ export default function SessionsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [selectedDay, setSelectedDay] = useState<"all" | "2026-09-18" | "2026-09-19">("all");
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [summary, setSummary] = useState<{ summary: string; keyTakeaways: string[]; targetAudience: string } | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -139,43 +166,103 @@ export default function SessionsPage() {
           </p>
         </div>
 
-        {/* Filters */}
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: "220px", position: "relative" }}>
-            <label htmlFor="session-search" className="input-label">
-              Search Agenda
-            </label>
-            <div style={{ position: "relative" }}>
-              <Search size={16} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
-              <input
-                id="session-search"
-                type="search"
-                className="input"
-                style={{ paddingLeft: "2.4rem" }}
-                placeholder="Search by topic, speaker, or hall..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                aria-label="Search sessions"
-              />
-            </div>
+        {/* Filters and Day Selector */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2rem" }}>
+          {/* Day Selector Pills */}
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={() => setSelectedDay("all")}
+              style={{
+                padding: "0.45rem 1rem",
+                borderRadius: "9999px",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                border: "1px solid",
+                transition: "all 0.15s ease",
+                background: selectedDay === "all" ? "var(--color-primary)" : "#ffffff",
+                color: selectedDay === "all" ? "#ffffff" : "var(--color-text-secondary)",
+                borderColor: selectedDay === "all" ? "var(--color-primary)" : "#cbd5e1",
+              }}
+            >
+              All Days (10 Sessions)
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedDay("2026-09-18")}
+              style={{
+                padding: "0.45rem 1rem",
+                borderRadius: "9999px",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                border: "1px solid",
+                transition: "all 0.15s ease",
+                background: selectedDay === "2026-09-18" ? "var(--color-primary)" : "#ffffff",
+                color: selectedDay === "2026-09-18" ? "#ffffff" : "var(--color-text-secondary)",
+                borderColor: selectedDay === "2026-09-18" ? "var(--color-primary)" : "#cbd5e1",
+              }}
+            >
+              Day 1 — Fri, 18 Sep 2026
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedDay("2026-09-19")}
+              style={{
+                padding: "0.45rem 1rem",
+                borderRadius: "9999px",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                border: "1px solid",
+                transition: "all 0.15s ease",
+                background: selectedDay === "2026-09-19" ? "var(--color-primary)" : "#ffffff",
+                color: selectedDay === "2026-09-19" ? "#ffffff" : "var(--color-text-secondary)",
+                borderColor: selectedDay === "2026-09-19" ? "var(--color-primary)" : "#cbd5e1",
+              }}
+            >
+              Day 2 — Sat, 19 Sep 2026
+            </button>
           </div>
 
-          <div style={{ minWidth: "180px" }}>
-            <label htmlFor="category-filter" className="input-label">
-              Format / Category
-            </label>
-            <select
-              id="category-filter"
-              className="input"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              aria-label="Filter by category"
-            >
-              <option value="">All Categories</option>
-              {SESSION_CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: "220px", position: "relative" }}>
+              <label htmlFor="session-search" className="input-label">
+                Search Agenda
+              </label>
+              <div style={{ position: "relative" }}>
+                <Search size={16} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
+                <input
+                  id="session-search"
+                  type="search"
+                  className="input"
+                  style={{ paddingLeft: "2.4rem" }}
+                  placeholder="Search by topic, speaker, or hall..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search sessions"
+                />
+              </div>
+            </div>
+
+            <div style={{ minWidth: "180px" }}>
+              <label htmlFor="category-filter" className="input-label">
+                Format / Category
+              </label>
+              <select
+                id="category-filter"
+                className="input"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                aria-label="Filter by category"
+              >
+                <option value="">All Categories</option>
+                {SESSION_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -185,93 +272,132 @@ export default function SessionsPage() {
             <div className="spinner" style={{ width: "2rem", height: "2rem", margin: "0 auto" }} role="status" aria-label="Loading sessions" />
             <p style={{ color: "var(--color-text-muted)", marginTop: "1rem", fontSize: "0.9rem" }}>Loading agenda...</p>
           </div>
-        )}
-
-        {/* Session Grid */}
+        )}        {/* Session Grid */}
         {!loading && (
           <div className="grid-3" style={{ gap: "1.5rem" }}>
-            {sessions.map((session) => {
-              const fillPct = Math.round((session.registered / session.capacity) * 100);
-              const color = CATEGORY_COLORS[session.category] ?? "var(--color-primary)";
-              return (
-                <article
-                  key={session.id}
-                  className="glass-card"
-                  style={{
-                    padding: "1.75rem",
-                    cursor: "pointer",
-                    background: "#ffffff",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                  onClick={() => void handleSessionClick(session)}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") void handleSessionClick(session); }}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`View details for ${session.title}`}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
-                    <span
+            {sessions
+              .filter((session) => selectedDay === "all" || session.start_time.startsWith(selectedDay))
+              .map((session) => {
+                const fillPct = Math.round((session.registered / session.capacity) * 100);
+                const color = CATEGORY_COLORS[session.category] ?? "var(--color-primary)";
+                return (
+                  <article
+                    key={session.id}
+                    className="glass-card"
+                    style={{
+                      padding: "1.6rem 1.75rem",
+                      cursor: "pointer",
+                      background: "#ffffff",
+                      display: "flex",
+                      flexDirection: "column",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "0.75rem",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+                      transition: "all 0.2s ease",
+                    }}
+                    onClick={() => void handleSessionClick(session)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") void handleSessionClick(session); }}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`View details for ${session.title}`}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                        <span
+                          style={{
+                            padding: "0.2rem 0.65rem",
+                            borderRadius: "var(--radius-full)",
+                            fontSize: "0.75rem",
+                            fontWeight: 700,
+                            background: `${color}12`,
+                            color,
+                            border: `1px solid ${color}30`,
+                          }}
+                        >
+                          {session.category}
+                        </span>
+                        {session.isFeatured && (
+                          <span className="badge badge-warning" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                            <Star size={11} fill="currentColor" /> Featured
+                          </span>
+                        )}
+                      </div>
+
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.3rem",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          color: "#4f46e5",
+                          background: "rgba(79, 70, 229, 0.08)",
+                          padding: "0.2rem 0.6rem",
+                          borderRadius: "9999px",
+                          border: "1px solid rgba(79, 70, 229, 0.2)",
+                        }}
+                      >
+                        <Calendar size={12} /> {formatDate(session.start_time)}
+                      </span>
+                    </div>
+
+                    <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "0.4rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}>
+                      {session.title}
+                    </h2>
+
+                    <p style={{ color: "var(--color-primary)", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.6rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <User size={14} /> {session.speaker}
+                    </p>
+
+                    <p style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginBottom: "1rem", lineHeight: 1.6, flex: 1 }}>
+                      {session.description.slice(0, 110)}...
+                    </p>
+
+                    {/* Hall and Clock Time Banner */}
+                    <div
                       style={{
-                        padding: "0.2rem 0.65rem",
-                        borderRadius: "var(--radius-full)",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        background: `${color}12`,
-                        color,
-                        border: `1px solid ${color}30`,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "0.8rem",
+                        color: "var(--color-text-muted)",
+                        marginBottom: "0.85rem",
+                        flexWrap: "wrap",
+                        gap: "0.5rem",
+                        padding: "0.5rem 0.65rem",
+                        background: "#f8fafc",
+                        borderRadius: "0.5rem",
+                        border: "1px solid #e2e8f0",
                       }}
                     >
-                      {session.category}
-                    </span>
-                    {session.isFeatured && (
-                      <span className="badge badge-warning" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                        <Star size={11} fill="currentColor" /> Featured
+                      <span style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontWeight: 600, color: "#1e293b" }}>
+                        <MapPin size={13} color="#4f46e5" /> {session.zone}
                       </span>
-                    )}
-                  </div>
-
-                  <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "0.4rem", color: "var(--color-text-primary)", lineHeight: 1.4 }}>
-                    {session.title}
-                  </h2>
-
-                  <p style={{ color: "var(--color-primary)", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <User size={14} /> {session.speaker}
-                  </p>
-
-                  <p style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginBottom: "1.25rem", lineHeight: 1.6, flex: 1 }}>
-                    {session.description.slice(0, 95)}...
-                  </p>
-
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--color-text-muted)", marginBottom: "0.75rem" }}>
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      <MapPin size={13} /> {session.zone}
-                    </span>
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      <Clock size={13} /> {formatTime(session.start_time)}
-                    </span>
-                  </div>
-
-                  {/* Capacity Meter */}
-                  <div>
-                    <div style={{ height: "5px", background: "var(--color-bg-3)", borderRadius: "3px", overflow: "hidden" }} role="progressbar" aria-valuenow={fillPct} aria-valuemin={0} aria-valuemax={100} aria-label={`${fillPct}% capacity`}>
-                      <div
-                        style={{
-                          height: "100%",
-                          width: `${fillPct}%`,
-                          background: fillPct > 90 ? "var(--color-danger)" : fillPct > 70 ? "var(--color-warning)" : "var(--color-success)",
-                          borderRadius: "3px",
-                        }}
-                      />
+                      <span style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontWeight: 600, color: "#0891b2" }}>
+                        <Clock size={13} /> {formatTimeRange(session.start_time, session.end_time)}
+                      </span>
                     </div>
-                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.35rem", display: "flex", justifyContent: "space-between" }}>
-                      <span>{session.registered} registered</span>
-                      <span>{fillPct}% full</span>
+
+                    {/* Capacity Meter */}
+                    <div>
+                      <div style={{ height: "5px", background: "var(--color-bg-3)", borderRadius: "3px", overflow: "hidden" }} role="progressbar" aria-valuenow={fillPct} aria-valuemin={0} aria-valuemax={100} aria-label={`${fillPct}% capacity`}>
+                        <div
+                          style={{
+                            height: "100%",
+                            width: `${fillPct}%`,
+                            background: fillPct > 90 ? "var(--color-danger)" : fillPct > 70 ? "var(--color-warning)" : "var(--color-success)",
+                            borderRadius: "3px",
+                          }}
+                        />
+                      </div>
+                      <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.35rem", display: "flex", justifyContent: "space-between" }}>
+                        <span>{session.registered} registered</span>
+                        <span>{fillPct}% full</span>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                  </article>
+                );
+              })}
           </div>
         )}
 
@@ -323,11 +449,27 @@ export default function SessionsPage() {
 
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.25rem" }}>
                 <span className="badge badge-primary">{selectedSession.category}</span>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.3rem",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "#4f46e5",
+                    background: "rgba(79, 70, 229, 0.08)",
+                    padding: "0.25rem 0.65rem",
+                    borderRadius: "9999px",
+                    border: "1px solid rgba(79, 70, 229, 0.2)",
+                  }}
+                >
+                  <Calendar size={12} /> {formatDate(selectedSession.start_time)}
+                </span>
                 <span className="badge badge-info" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                   <MapPin size={12} /> {selectedSession.zone}
                 </span>
                 <span className="badge badge-success" style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <Clock size={12} /> {formatTime(selectedSession.start_time)}
+                  <Clock size={12} /> {formatTimeRange(selectedSession.start_time, selectedSession.end_time)}
                 </span>
               </div>
 

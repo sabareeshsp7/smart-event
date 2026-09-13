@@ -69,29 +69,174 @@ function createTables(db: Database.Database): void {
 }
 
 const SEED_SESSIONS = [
-  { id: "s1", title: "Opening Keynote: The Future of AI", speaker: "Dr. Priya Sharma", bio: "Chief AI Scientist at TechCorp", zone: "Hall 1 — Grand Alpha Stage", category: "Keynote", start: "09:00", end: "09:45", desc: "An inspiring look at where AI is taking us in the next decade.", tags: ["AI & ML", "Leadership"], capacity: 2000, registered: 1800, featured: 1 },
-  { id: "s2", title: "Building with LLMs in Production", speaker: "Rahul Mehta", bio: "Staff Engineer at Scale AI", zone: "Hall 2 — Beta Auditorium", category: "Workshop", start: "10:00", end: "11:30", desc: "Practical guide to deploying LLMs in real-world applications with focus on reliability.", tags: ["AI & ML", "Cloud"], capacity: 300, registered: 280, featured: 0 },
-  { id: "s3", title: "Next.js 15 Deep Dive", speaker: "Ananya Patel", bio: "Vercel Developer Advocate", zone: "Hall 3 — Workshop Hall A", category: "Workshop", start: "10:00", end: "11:30", desc: "Everything new in Next.js 15: App Router, Server Components, and Streaming.", tags: ["Web Development"], capacity: 200, registered: 195, featured: 0 },
-  { id: "s4", title: "Startup Funding Panel", speaker: "Multiple VCs", bio: "Top VCs from Sequoia, Tiger Global, Accel", zone: "Hall 4 — Workshop Hall B", category: "Panel", start: "11:00", end: "12:00", desc: "Real talk from investors about what it takes to raise in 2025.", tags: ["Startup", "Leadership"], capacity: 150, registered: 120, featured: 1 },
-  { id: "s5", title: "Design Systems at Scale", speaker: "Meena Krishnamurthy", bio: "Design Lead at Razorpay", zone: "Innovation Hub — Central Atrium", category: "Workshop", start: "11:30", end: "13:00", desc: "How to build and maintain a design system used by hundreds of engineers.", tags: ["Design", "Web Development"], capacity: 100, registered: 85, featured: 0 },
-  { id: "s6", title: "Data Science for Impact", speaker: "Vikram Rajan", bio: "Head of Data Science at Swiggy", zone: "Hall 3 — Workshop Hall A", category: "Workshop", start: "13:00", end: "14:30", desc: "Using data science to drive business impact with real case studies.", tags: ["Data Science", "AI & ML"], capacity: 200, registered: 155, featured: 0 },
-  { id: "s7", title: "Zero Trust Security", speaker: "Asha Nair", bio: "CISO at PhonePe", zone: "Hall 4 — Workshop Hall B", category: "Workshop", start: "13:00", end: "14:30", desc: "Implementing zero trust security architecture in modern cloud environments.", tags: ["Cybersecurity", "Cloud"], capacity: 150, registered: 140, featured: 0 },
-  { id: "s8", title: "Lightning Talks: Indie Hackers", speaker: "Various", bio: "10+ indie hackers sharing 5-min pitches", zone: "Innovation Hub — Central Atrium", category: "Lightning Talk", start: "13:30", end: "14:30", desc: "Rapid-fire presentations from solo founders who built profitable products.", tags: ["Startup"], capacity: 100, registered: 95, featured: 0 },
-  { id: "s9", title: "Flutter vs React Native in 2025", speaker: "Arjun Kapoor", bio: "Mobile Lead at Meesho", zone: "Hall 2 — Beta Auditorium", category: "Demo", start: "14:00", end: "15:00", desc: "Side-by-side live demo building the same app in both frameworks.", tags: ["Mobile", "Web Development"], capacity: 300, registered: 210, featured: 0 },
-  { id: "s10", title: "Kubernetes for Mere Mortals", speaker: "Sonal Gupta", bio: "DevOps Engineer at Infosys", zone: "Hall 3 — Workshop Hall A", category: "Workshop", start: "15:00", end: "16:30", desc: "Demystifying Kubernetes for developers who just want things to work.", tags: ["DevOps", "Cloud"], capacity: 200, registered: 170, featured: 0 },
-  { id: "s11", title: "Closing Keynote: Building for Bharat", speaker: "Nandan Nilekani", bio: "Co-founder of Infosys, Architect of Aadhaar", zone: "Hall 1 — Grand Alpha Stage", category: "Keynote", start: "17:00", end: "18:00", desc: "How technology can reach the next billion users and transform India.", tags: ["Leadership", "Startup"], capacity: 2000, registered: 1950, featured: 1 },
-  { id: "s12", title: "Networking Mixer", speaker: "All Attendees", bio: "", zone: "Networking Plaza & Lounge", category: "Networking", start: "18:00", end: "20:00", desc: "Mix, mingle, and make connections with fellow attendees and speakers.", tags: ["Leadership"], capacity: 500, registered: 350, featured: 0 },
-  { id: "s13", title: "GenAI Hackathon Kickoff", speaker: "Event Team", bio: "", zone: "Innovation Hub — Central Atrium", category: "Workshop", start: "08:30", end: "09:00", desc: "Rules, themes, and team formation for the 24-hour GenAI Hackathon.", tags: ["AI & ML", "Startup"], capacity: 100, registered: 100, featured: 1 },
-  { id: "s14", title: "Web3 & Real-World Assets", speaker: "Crypto Panel", bio: "Founders from top Web3 startups", zone: "Hall 4 — Workshop Hall B", category: "Panel", start: "15:00", end: "16:00", desc: "Practical applications of blockchain beyond speculation.", tags: ["Blockchain", "Startup"], capacity: 150, registered: 80, featured: 0 },
-  { id: "s15", title: "Cloud Cost Optimization", speaker: "Deepak Verma", bio: "FinOps Lead at Freshworks", zone: "Hall 2 — Beta Auditorium", category: "Workshop", start: "16:00", end: "17:00", desc: "Cut your AWS/GCP bill by 40% with these battle-tested strategies.", tags: ["Cloud", "DevOps"], capacity: 300, registered: 220, featured: 0 },
+  {
+    id: "biec-prog-1",
+    title: "Opening Plenary: India AI & Cloud Compute Summit 2026",
+    speaker: "Dr. Priya Sharma & Special Delegates",
+    bio: "Chief AI Scientist & Government Steering Committee",
+    zone: "Hall 1 — Grand Alpha Stage",
+    category: "Keynote",
+    date: "2026-09-18",
+    start: "09:00",
+    end: "10:15",
+    desc: "Official opening plenary inaugurating the India AI & Cloud Compute Summit at BIEC, featuring national technology strategy and compute architecture.",
+    tags: ["AI & ML", "Cloud", "Leadership"],
+    capacity: 2000,
+    registered: 1850,
+    featured: 1,
+  },
+  {
+    id: "biec-prog-2",
+    title: "Next-Gen Autonomous Robotics & Drone Systems Showcase",
+    speaker: "Robotics Research Group & Industry Partners",
+    bio: "Autonomous Systems Laboratory & Industry Consortium",
+    zone: "Hall 3 — Workshop Hall A",
+    category: "Workshop",
+    date: "2026-09-18",
+    start: "10:30",
+    end: "11:30",
+    desc: "Live industrial robotics and drone demonstration with hardware-in-the-loop and edge AI telemetry at the Robotics Pavilion.",
+    tags: ["AI & ML", "Startup"],
+    capacity: 800,
+    registered: 760,
+    featured: 0,
+  },
+  {
+    id: "biec-prog-3",
+    title: "Building Enterprise LLMs & High-Throughput Inference",
+    speaker: "Rahul Mehta (Staff AI Engineer)",
+    bio: "Staff AI Engineer at Scale AI",
+    zone: "Hall 2 — Beta Auditorium",
+    category: "Workshop",
+    date: "2026-09-18",
+    start: "11:45",
+    end: "13:00",
+    desc: "End-to-end technical guide to deploying production-grade large language models with KV-cache optimization, tensor parallelism, and low-latency inference.",
+    tags: ["AI & ML", "Cloud"],
+    capacity: 400,
+    registered: 385,
+    featured: 1,
+  },
+  {
+    id: "biec-prog-4",
+    title: "Digital Public Infrastructure (DPI) & Next-Gen Payments",
+    speaker: "National FinTech Council Panelists",
+    bio: "Architects of UPI, ONDC, and Open Financial Exchange",
+    zone: "Hall 4 — Workshop Hall B",
+    category: "Panel",
+    date: "2026-09-18",
+    start: "14:00",
+    end: "15:15",
+    desc: "High-level panel discussing the global adoption of India's DPI stack, real-time cross-border settlements, and CBDC integration.",
+    tags: ["Startup", "Leadership"],
+    capacity: 350,
+    registered: 330,
+    featured: 0,
+  },
+  {
+    id: "biec-prog-5",
+    title: "Zero Trust Cloud Defense & Infrastructure Resilience",
+    speaker: "Asha Nair (Chief Security Officer)",
+    bio: "Chief Security Officer at PhonePe",
+    zone: "Hall 4 — Workshop Hall B",
+    category: "Workshop",
+    date: "2026-09-18",
+    start: "15:30",
+    end: "16:45",
+    desc: "Hands-on implementation of Zero Trust Architecture, identity-aware proxies, and automated threat response across multi-cloud environments.",
+    tags: ["Cybersecurity", "Cloud"],
+    capacity: 300,
+    registered: 285,
+    featured: 0,
+  },
+  {
+    id: "biec-prog-6",
+    title: "Clean Energy Grid & Electric Vehicle Mobility Conclave",
+    speaker: "EV Consortium Leaders",
+    bio: "Pioneers in Battery Technology and Renewable Grid Integration",
+    zone: "Hall 2 — Beta Auditorium",
+    category: "Panel",
+    date: "2026-09-19",
+    start: "09:30",
+    end: "10:45",
+    desc: "Strategic conclave analyzing smart EV charging grids, battery swapping networks, and sustainable renewable energy storage architectures.",
+    tags: ["Design", "Startup"],
+    capacity: 600,
+    registered: 540,
+    featured: 0,
+  },
+  {
+    id: "biec-prog-7",
+    title: "Quantum Computing & Quantum Key Distribution (QKD) Forum",
+    speaker: "Quantum Physics Lab Researchers",
+    bio: "Principal Scientists from National Quantum Mission",
+    zone: "Hall 3 — Workshop Hall A",
+    category: "Keynote",
+    date: "2026-09-19",
+    start: "11:15",
+    end: "12:30",
+    desc: "In-depth briefing on photonic qubits, topological quantum states, and post-quantum cryptographic standards protecting digital infrastructure.",
+    tags: ["Data Science", "AI & ML"],
+    capacity: 250,
+    registered: 240,
+    featured: 1,
+  },
+  {
+    id: "biec-prog-8",
+    title: "Indie Founders & Venture Capital Demo Day",
+    speaker: "Top 12 Early-Stage Founders & VCs",
+    bio: "Investors from Peak XV, Accel, Lightspeed & High-Growth Founders",
+    zone: "Innovation Hub — Central Atrium",
+    category: "Lightning Talk",
+    date: "2026-09-19",
+    start: "14:00",
+    end: "15:45",
+    desc: "Rapid-fire 5-minute pitches from top 12 AI and deep-tech startups followed by live investor Q&A and term sheet negotiations.",
+    tags: ["Startup", "Leadership"],
+    capacity: 450,
+    registered: 440,
+    featured: 1,
+  },
+  {
+    id: "biec-prog-9",
+    title: "Closing Keynote: Digital Transformation of Bharat",
+    speaker: "Nandan Nilekani & Distinguished Tech Leaders",
+    bio: "Co-founder of Infosys & National Digital Infrastructure Architect",
+    zone: "Hall 1 — Grand Alpha Stage",
+    category: "Keynote",
+    date: "2026-09-19",
+    start: "16:30",
+    end: "17:45",
+    desc: "Grand closing keynote addressing the monumental societal impact of technology reaching India's next billion users.",
+    tags: ["Leadership", "Startup"],
+    capacity: 2000,
+    registered: 1980,
+    featured: 1,
+  },
+  {
+    id: "biec-prog-10",
+    title: "BIEC Networking Gala & Grand Cultural Evening",
+    speaker: "All Summit Delegates & Performers",
+    bio: "Hosted by EventIQ & BIEC Organizing Committee",
+    zone: "Networking Plaza & Lounge",
+    category: "Networking",
+    date: "2026-09-19",
+    start: "18:30",
+    end: "21:00",
+    desc: "Executive gala dinner, high-level networking mixer, and traditional cultural performance celebrating summit achievements.",
+    tags: ["Leadership"],
+    capacity: 1500,
+    registered: 1450,
+    featured: 1,
+  },
 ];
 
 const SEED_ALERTS = [
-  { id: "a1", title: "Main Stage Session Starting", message: "The Opening Keynote begins in 10 minutes at Hall 1 — Grand Alpha Stage.", severity: "low", zone: "Hall 1 — Grand Alpha Stage" },
+  { id: "a1", title: "Opening Plenary Starting", message: "India AI & Cloud Compute Summit 2026 Opening Plenary starts in 10 minutes at Hall 1 — Grand Alpha Stage.", severity: "low", zone: "Hall 1 — Grand Alpha Stage" },
   { id: "a2", title: "South Food Concourse Open", message: "South Food Concourse is now open. South Indian thali and organic refreshments available.", severity: "low", zone: "South Food Concourse" },
-  { id: "a3", title: "Workshop Hall A: Near Capacity", message: "Hall 3 — Workshop Hall A is at 95% capacity. Overflow seating available in Hall 4.", severity: "medium", zone: "Hall 3 — Workshop Hall A" },
-  { id: "a4", title: "Schedule Change: Panel Moved", message: "The Startup Funding Panel in Hall 4 has been adjusted to 11:30 AM.", severity: "medium", zone: "Hall 4 — Workshop Hall B" },
-  { id: "a5", title: "Routine Safety Inspection", message: "Routine campus safety telemetry check underway across all BIEC pavilions.", severity: "high", zone: "All Areas" },
+  { id: "a3", title: "Workshop Hall A: Near Capacity", message: "Hall 3 — Workshop Hall A is at 95% capacity for the Autonomous Robotics showcase. Overflow in Hall 4.", severity: "medium", zone: "Hall 3 — Workshop Hall A" },
+  { id: "a4", title: "Schedule Notice: FinTech Panel", message: "Digital Public Infrastructure Panel begins promptly at 14:00 in Hall 4 — Workshop Hall B.", severity: "medium", zone: "Hall 4 — Workshop Hall B" },
+  { id: "a5", title: "Campus Safety Telemetry Active", message: "BIEC campus safety telemetry and automated hall dispatch active across all pavilions.", severity: "high", zone: "All Areas" },
 ];
 
 /** Seeds the database with demo data if tables are empty. */
@@ -99,7 +244,16 @@ export function seedDatabase(db: Database.Database): void {
   createTables(db);
 
   const sessionCount = (db.prepare("SELECT COUNT(*) as c FROM sessions").get() as { c: number }).c;
-  if (sessionCount > 0) return; // Already seeded
+  const hasLegacy = Boolean(
+    db.prepare("SELECT 1 FROM sessions WHERE id NOT LIKE 'biec-prog-%' OR start_time NOT LIKE '2026-09%' LIMIT 1").get()
+  );
+
+  if (sessionCount > 0 && !hasLegacy && sessionCount === SEED_SESSIONS.length) {
+    return; // Already up to date with verified 2026 Summit data
+  }
+
+  // Delete legacy/mismatched sessions to reseed latest 2026 data
+  db.exec("DELETE FROM sessions; DELETE FROM alerts; DELETE FROM crowd_zones;");
 
   const insertSession = db.prepare(`
     INSERT INTO sessions (id, title, speaker, speaker_bio, zone, category, start_time, end_time, description, tags, capacity, registered, is_featured)
@@ -118,13 +272,14 @@ export function seedDatabase(db: Database.Database): void {
     for (const s of SEED_SESSIONS) {
       insertSession.run(
         s.id, s.title, s.speaker, s.bio, s.zone, s.category,
-        `2025-03-15T${s.start}:00`, `2025-03-15T${s.end}:00`,
+        `${s.date}T${s.start}:00`, `${s.date}T${s.end}:00`,
         s.desc, JSON.stringify(s.tags), s.capacity, s.registered, s.featured
       );
     }
     for (const a of SEED_ALERTS) {
       insertAlert.run(a.id, a.title, a.message, a.severity, a.zone);
     }
+
     VENUE_ZONES.forEach((zone, i) => {
       const capacity = zone.includes("Stage") ? 2000 : zone.includes("Hall") ? 300 : 500;
       const occupancy = Math.floor(Math.random() * capacity * 0.85);
