@@ -9,7 +9,10 @@ import path from "path";
 import fs from "fs";
 import { seedDatabase } from "./schema";
 
-const DB_PATH = path.join(process.cwd(), "data", "event.db");
+const DB_PATH =
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME
+    ? path.join("/tmp", "event.db")
+    : path.join(process.cwd(), "data", "event.db");
 
 /**
  * Returns the singleton SQLite database connection.
