@@ -49,6 +49,7 @@ export const VENUE_ADDRESS = "10th Mile, Tumkur Road, Madavara Post, Bengaluru, 
 // ─── Navigation routes ───────────────────────────────────────────────────────
 export const ROUTES = {
   HOME: "/",
+  EVENTS: "/events",
   NAVIGATION: "/navigation",
   SESSIONS: "/sessions",
   RECOMMENDATIONS: "/recommendations",
@@ -121,6 +122,13 @@ export const MAX_IMAGE_WIDTH_PX = 1024 as const;
 export const MAX_IMAGE_SIZE_BYTES = 5242880; // 5MB
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 
+// ─── Ticketmaster Discovery API Config ───────────────────────────────────────
+export const TICKETMASTER_API_KEY: string =
+  process.env.TICKETMASTER_API_KEY ?? "EAphZpXAd9PSUlDpSnvmrn4s9v59JWVs";
+export const TICKETMASTER_CONSUMER_SECRET: string =
+  process.env.TICKETMASTER_CONSUMER_SECRET ?? "ME7k6QZWA8cyAEix";
+export const TICKETMASTER_BASE_URL = "https://app.ticketmaster.com/discovery/v2" as const;
+
 // ─── API route paths ─────────────────────────────────────────────────────────
 export const API_ROUTES = {
   SESSIONS: "/api/sessions",
@@ -132,6 +140,8 @@ export const API_ROUTES = {
   CROWD_RISK: "/api/crowd-risk",
   HEALTH: "/api/health",
   SPEECH_TTS: "/api/speech-tts",
+  ATTENDEES: "/api/attendees",
+  TICKETMASTER_EVENTS: "/api/ticketmaster/events",
 } as const;
 
 // ─── Sarvam AI supported languages ───────────────────────────────────────────

@@ -75,13 +75,20 @@ export default function ChatPage() {
 
   return (
     <div
+      className="chat-viewport-locked"
       style={{
-        height: "calc(100vh - 4.5rem)",
+        height: "calc(100dvh - 4.5rem)",
+        maxHeight: "calc(100dvh - 4.5rem)",
         display: "flex",
         flexDirection: "column",
         background: "var(--color-bg)",
         overflow: "hidden",
-        marginTop: "4.5rem",
+        position: "fixed",
+        top: "4.5rem",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 40,
       }}
     >
       {/* Top Header Bar */}

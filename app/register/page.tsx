@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   UserCheck,
   QrCode,
@@ -17,8 +18,10 @@ import {
   Users,
   MapPin,
   Calendar,
+  Ticket,
 } from "lucide-react";
-import { INTEREST_TAGS, VENUE_NAME } from "@/lib/constants";
+import { INTEREST_TAGS, VENUE_NAME, ROUTES } from "@/lib/constants";
+import { useUserProfile } from "@/lib/hooks/useUserProfile";
 
 interface RegisteredBadge {
   id: string;
@@ -50,9 +53,22 @@ export default function RegisterPage() {
   const [badge, setBadge] = useState<RegisteredBadge | null>(null);
   const [totalRegistered, setTotalRegistered] = useState<number>(1420);
 
+  const { profile, saveProfile } = useUserProfile();
+
   useEffect(() => {
     void fetchStats();
   }, []);
+
+  useEffect(() => {
+    if (profile.name || profile.phone || profile.email) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || profile.name,
+        phone: prev.phone || profile.phone,
+        email: prev.email || profile.email,
+      }));
+    }
+  }, [profile]);
 
   const fetchStats = async () => {
     try {
@@ -94,6 +110,13 @@ export default function RegisterPage() {
 
       setBadge(json.attendee);
       setTotalRegistered((prev) => prev + 1);
+      saveProfile({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        company: formData.company,
+        role: formData.role,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to register.");
     } finally {
@@ -104,6 +127,57 @@ export default function RegisterPage() {
   return (
     <div className="page-wrapper">
       <div className="container" style={{ maxWidth: "1000px" }}>
+        {/* Ticketmaster Live Hub Prompt */}
+        <div
+          className="glass-card"
+          style={{
+            padding: "1.25rem 1.5rem",
+            marginBottom: "2.5rem",
+            background: "linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(8, 145, 178, 0.04))",
+            border: "1px solid rgba(79, 70, 229, 0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+            borderRadius: "0.75rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "0.5rem",
+                background: "#4f46e5",
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Ticket size={22} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: "1rem", color: "#0f172a" }}>
+                Looking for Real Live Events &amp; Concerts?
+              </div>
+              <div style={{ fontSize: "0.85rem", color: "#475569" }}>
+                Browse 10,000+ real-time events powered by the Ticketmaster Discovery API with 1-click digital pass claiming.
+              </div>
+            </div>
+          </div>
+          <Link
+            href={ROUTES.EVENTS}
+            className="btn btn-primary btn-sm"
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", whiteSpace: "nowrap" }}
+          >
+            <Sparkles size={14} />
+            <span>Explore Ticketmaster Live Hub</span>
+          </Link>
+        </div>
+
         {/* Header Header */}
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <div

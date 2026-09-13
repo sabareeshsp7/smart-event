@@ -8,7 +8,6 @@ import {
   ShieldAlert,
   Accessibility,
   Bell,
-  LayoutDashboard,
   UserCheck,
   HeartPulse,
   Shield,
@@ -16,6 +15,7 @@ import {
   PhoneCall,
   Bot,
   ArrowRight,
+  Ticket,
 } from "lucide-react";
 import { ROUTES, EMERGENCY_CONTACTS, VENUE_NAME } from "@/lib/constants";
 
@@ -83,11 +83,11 @@ const FEATURES = [
     color: "#0891b2",
   },
   {
-    icon: LayoutDashboard,
-    title: "Organizer Command",
-    desc: "Oversee zone occupancy thresholds, publish emergency alerts, and view system diagnostics.",
-    href: ROUTES.DASHBOARD,
-    color: "#3730a3",
+    icon: Ticket,
+    title: "Ticketmaster Live Hub",
+    desc: "Discover 10,000+ real live concerts, summits, and matches with instant digital pass claiming.",
+    href: ROUTES.EVENTS,
+    color: "#4f46e5",
   },
 ] as const;
 
@@ -167,11 +167,11 @@ export default function HomePage() {
           </p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href={ROUTES.SESSIONS} className="btn btn-primary btn-lg" id="cta-sessions">
-              <Calendar size={18} /> Explore Sessions
+            <Link href={ROUTES.EVENTS} className="btn btn-primary btn-lg" id="cta-events">
+              <Ticket size={18} /> Live Events &amp; Passes
             </Link>
-            <Link href={ROUTES.REGISTER} className="btn btn-ghost btn-lg" id="cta-register">
-              <UserCheck size={18} /> Register &amp; Get Badge
+            <Link href={ROUTES.CHAT} className="btn btn-ghost btn-lg" id="cta-chat">
+              <Bot size={18} /> AI Concierge
             </Link>
             <Link href={ROUTES.NAVIGATION} className="btn btn-ghost btn-lg" id="cta-map">
               <MapPin size={18} /> Venue Map

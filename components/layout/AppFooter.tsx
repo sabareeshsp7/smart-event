@@ -1,3 +1,4 @@
+"use client";
 /**
  * App Footer — emergency contacts, quick links, and technology attribution.
  * Clean light mode aesthetic with Lucide icons and zero emojis.
@@ -5,6 +6,7 @@
  */
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Sparkles,
   ShieldAlert,
@@ -18,6 +20,9 @@ import { EMERGENCY_CONTACTS, ROUTES, APP_NAME, APP_VERSION } from "@/lib/constan
 
 /** App footer with emergency contacts and tech attribution in Light Mode. */
 export function AppFooter() {
+  const pathname = usePathname();
+  if (pathname === "/chat") return null;
+
   const getContactIcon = (number: string) => {
     if (number === "112") return <ShieldAlert size={15} color="var(--color-danger)" />;
     if (number === "108") return <HeartPulse size={15} color="var(--color-danger)" />;

@@ -82,6 +82,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Fixed Chat Viewport Lock (ChatGPT / Gemini style) ── */
+html:has(.chat-viewport-locked),
+body:has(.chat-viewport-locked) {
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+body:has(.chat-viewport-locked) main {
+  height: calc(100dvh - 4.5rem) !important;
+  max-height: calc(100dvh - 4.5rem) !important;
+  overflow: hidden !important;
+  margin-top: 4.5rem !important;
+}
+
+
 /* ── Skip navigation (A11y) ── */
 .skip-nav {
   position: absolute;

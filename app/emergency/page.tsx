@@ -1,4 +1,11 @@
-import type { Metadata } from "next";
+"use client";
+/**
+ * Emergency SOS & Safety Page.
+ * Rapid speed dial directory, medical posts, and caller identity integration.
+ * Light mode aesthetic with Lucide icons and zero emojis.
+ */
+
+import { useState } from "react";
 import {
   ShieldAlert,
   PhoneCall,
@@ -8,17 +15,13 @@ import {
   Info,
   Search,
   Building2,
-  AlertTriangle,
   Phone,
   CheckCircle2,
+  User,
+  Check,
 } from "lucide-react";
 import { EMERGENCY_CONTACTS, VENUE_NAME } from "@/lib/constants";
-
-export const metadata: Metadata = {
-  title: "Emergency SOS & Venue Safety",
-  description:
-    "Direct speed dial for emergency services (112, 108, 100), medical first aid locations, security dispatch, and evacuation protocols.",
-};
+import { useUserProfile } from "@/lib/hooks/useUserProfile";
 
 const SAFETY_LOCATIONS = [
   { name: "Primary First Aid Wing", zone: "East Wing near Gate 2", icon: HeartPulse, available: true },
@@ -37,8 +40,12 @@ const EMERGENCY_STEPS = [
   { step: "5", title: "Proceed to Assembly Zone", desc: "Assemble at the open paved plaza situated outside Main Entrance Gate A." },
 ] as const;
 
-/** Emergency & SOS page in Light Mode with zero emojis. */
 export default function EmergencyPage() {
+  const { profile, saveProfile } = useUserProfile();
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [name, setName] = useState(profile.name);
+  const [phone, setPhone] = useState(profile.phone);
+
   const getContactIcon = (number: string) => {
     if (number === "112") return <ShieldAlert size={22} color="var(--color-danger)" />;
     if (number === "108") return <HeartPulse size={22} color="var(--color-danger)" />;
@@ -47,9 +54,15 @@ export default function EmergencyPage() {
     return <PhoneCall size={22} color="var(--color-danger)" />;
   };
 
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveProfile({ name: name.trim(), phone: phone.trim() });
+    setEditingProfile(false);
+  };
+
   return (
     <div className="page-wrapper">
-      <div className="container">
+      <div className="container" style={{ paddingTop: "2rem", paddingBottom: "4rem" }}>
         {/* Header */}
         <div style={{ marginBottom: "2.5rem" }}>
           <div
@@ -75,6 +88,97 @@ export default function EmergencyPage() {
             24/7 rapid dispatch contacts, first aid posts, and evacuation procedures for {VENUE_NAME}
           </p>
         </div>
+
+        {/* Attendee Emergency Identity Banner */}
+        <div
+          className="glass-card"
+          style={{
+            padding: "1.25rem 1.5rem",
+            marginBottom: "2rem",
+            background: "#ffffff",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "1rem",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#64748b", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
+              <User size={13} color="#4f46e5" />
+              <span>Attendee Caller Identity for Dispatchers</span>
+            </div>
+            <div style={{ fontSize: "1rem", fontWeight: 700, color: "#0f172a" }}>
+              {profile.name ? profile.name : "Name not registered yet"} · {profile.phone ? profile.phone : "No phone number attached"}
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setName(profile.name);
+              setPhone(profile.phone);
+              setEditingProfile(!editingProfile);
+            }}
+            className="btn btn-ghost btn-sm"
+            style={{ border: "1px solid #cbd5e1" }}
+          >
+            {editingProfile ? "Close" : "Update My SOS Contact Info"}
+          </button>
+        </div>
+
+        {editingProfile && (
+          <form
+            onSubmit={handleSave}
+            className="glass-card"
+            style={{
+              padding: "1.5rem",
+              marginBottom: "2rem",
+              background: "#f8fafc",
+              border: "1px solid #cbd5e1",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1rem",
+              alignItems: "flex-end",
+            }}
+          >
+            <div style={{ flex: 1, minWidth: "220px" }}>
+              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                Full Name
+              </label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Rahul Verma"
+                style={{ width: "100%", padding: "0.55rem 0.85rem", borderRadius: "0.375rem", border: "1px solid #cbd5e1" }}
+              />
+            </div>
+
+            <div style={{ flex: 1, minWidth: "220px" }}>
+              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+91-9876543210"
+                style={{ width: "100%", padding: "0.55rem 0.85rem", borderRadius: "0.375rem", border: "1px solid #cbd5e1" }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary btn-sm"
+              style={{ padding: "0.6rem 1.25rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+            >
+              <Check size={15} /> Save Contact Info
+            </button>
+          </form>
+        )}
 
         {/* SOS Emergency Speed Dial */}
         <section aria-labelledby="sos-heading" style={{ marginBottom: "3.5rem" }}>
@@ -224,31 +328,31 @@ export default function EmergencyPage() {
             </div>
           </section>
 
-          {/* Emergency Evacuation Protocol */}
-          <section aria-labelledby="emergency-steps-heading">
-            <h2 id="emergency-steps-heading" style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Shield size={18} color="var(--color-primary)" /> Evacuation Guidelines
+          {/* Incident Protocol Checklist */}
+          <section aria-labelledby="protocol-heading">
+            <h2 id="protocol-heading" style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Shield size={18} color="var(--color-primary)" /> Evacuation &amp; Safety Protocol
             </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {EMERGENCY_STEPS.map((s) => (
                 <div
                   key={s.step}
                   className="glass-card"
                   style={{
-                    padding: "1.15rem 1.25rem",
+                    padding: "1rem 1.25rem",
                     display: "flex",
-                    gap: "1rem",
                     alignItems: "flex-start",
+                    gap: "1rem",
                     background: "#ffffff",
                   }}
                 >
                   <div
                     style={{
-                      width: "2rem",
-                      height: "2rem",
+                      width: "28px",
+                      height: "28px",
                       borderRadius: "50%",
-                      background: "var(--gradient-primary)",
-                      color: "#ffffff",
+                      background: "rgba(79, 70, 229, 0.1)",
+                      color: "var(--color-primary)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -256,15 +360,14 @@ export default function EmergencyPage() {
                       fontSize: "0.85rem",
                       flexShrink: 0,
                     }}
-                    aria-hidden="true"
                   >
                     {s.step}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-text-primary)" }}>
+                    <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--color-text-primary)", marginBottom: "0.2rem" }}>
                       {s.title}
                     </div>
-                    <div style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem", marginTop: "0.2rem", lineHeight: 1.5 }}>
+                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.825rem", lineHeight: 1.5 }}>
                       {s.desc}
                     </div>
                   </div>
@@ -272,29 +375,6 @@ export default function EmergencyPage() {
               ))}
             </div>
           </section>
-        </div>
-
-        {/* Assembly Point Alert Strip */}
-        <div
-          className="alert-banner"
-          style={{
-            marginTop: "2.5rem",
-            background: "rgba(217, 119, 6, 0.08)",
-            borderColor: "rgba(217, 119, 6, 0.25)",
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-          }}
-          role="note"
-          aria-label="Assembly point notification"
-        >
-          <AlertTriangle size={22} color="var(--color-warning)" style={{ flexShrink: 0 }} />
-          <div>
-            <strong style={{ color: "var(--color-warning)" }}>Designated Emergency Assembly Ground:</strong>
-            <span style={{ color: "var(--color-text-secondary)", marginLeft: "0.5rem", fontSize: "0.9rem" }}>
-              Proceed immediately to the open paved concourse situated outside <strong>Main Entrance (Gate A)</strong>. Follow instructions from Floor Marshals in orange vests.
-            </span>
-          </div>
         </div>
       </div>
     </div>
